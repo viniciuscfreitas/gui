@@ -267,17 +267,6 @@ def health():
     logger.debug('Health check')
     return jsonify({'status': 'ok'}), 200
 
-# Painel admin (HTML/CSS/JS vanilla - Grug-approved)
-@app.route('/admin')
-def admin():
-    if 'logged_in' not in session:
-        return render_template_string(LOGIN_HTML), 200
-    return render_template_string(ADMIN_HTML), 200
-
-if __name__ == '__main__':
-    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
-
 # Templates inline (Locality of Behavior - Grug-approved)
 LOGIN_HTML = '''<!DOCTYPE html>
 <html lang="pt-BR">
@@ -375,34 +364,100 @@ ADMIN_HTML = '''<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Leads</title>
+    <title>Admin - Leads • Gui Magellane</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #000;
-            color: #fff;
-            padding: 2rem;
+        :root {
+            --bg-black: #000;
+            --bg-dark: #0f0f0f;
+            --bg-card: #141414;
+            --border: #333;
+            --accent-gold: #d4af37;
+            --accent-pink: #ff00aa;
+            --accent-green: #39ff14;
+            --text-white: #fff;
+            --text-gray: #999;
         }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-white);
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .font-syne { font-family: 'Syne', sans-serif; }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        h1 { font-size: 1.5rem; }
-        .logout-btn {
+        h1 { font-size: 1.75rem; font-family: 'Syne', sans-serif; }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .btn {
             padding: 0.5rem 1rem;
-            background: #333;
-            color: #fff;
-            border: 1px solid #555;
+            border: none;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
         }
-        .logout-btn:hover { background: #555; }
+        .btn-primary {
+            background: var(--accent-gold);
+            color: #000;
+        }
+        .btn-primary:hover { background: #c4a030; transform: translateY(-1px); }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-white);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: #1a1a1a; }
+        .btn-danger {
+            background: var(--accent-pink);
+            color: #000;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+        }
+        .btn-danger:hover { background: #ff00cc; }
+        .filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            color: var(--text-gray);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: var(--accent-gold);
+            color: #000;
+            border-color: var(--accent-gold);
+        }
+        .filter-btn:hover:not(.active) {
+            background: #1a1a1a;
+            color: var(--text-white);
+        }
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -410,55 +465,111 @@ ADMIN_HTML = '''<!DOCTYPE html>
             margin-bottom: 2rem;
         }
         .stat-card {
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             padding: 1.5rem;
+            border-radius: 1rem;
+            transition: transform 0.2s;
         }
-        .stat-value { font-size: 2rem; font-weight: 700; color: #ff3333; }
-        .stat-label { font-size: 0.875rem; color: #999; margin-top: 0.5rem; }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent-gold); font-family: 'Syne', sans-serif; }
+        .stat-label { font-size: 0.875rem; color: var(--text-gray); margin-top: 0.5rem; }
+        .stat-sub { font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem; }
         .leads-table {
             width: 100%;
             border-collapse: collapse;
-            background: #0a0a0a;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            overflow: hidden;
         }
         .leads-table th,
         .leads-table td {
             padding: 1rem;
             text-align: left;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border);
         }
         .leads-table th {
-            background: #050505;
+            background: var(--bg-dark);
             font-weight: 700;
-            color: #ff3333;
-        }
-        .leads-table tr:hover { background: #111; }
-        .delete-btn {
-            padding: 0.25rem 0.75rem;
-            background: #ff3333;
-            color: #000;
-            border: none;
-            cursor: pointer;
+            color: var(--accent-gold);
             font-size: 0.75rem;
-            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        .delete-btn:hover { background: #fff; }
+        .leads-table tr:hover { background: #1a1a1a; }
+        .leads-table tr:last-child td { border-bottom: none; }
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            color: #000;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+        }
+        .btn-whatsapp:hover { background: #22c55e; }
         .empty {
             text-align: center;
             padding: 3rem;
-            color: #999;
+            color: var(--text-gray);
         }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        .toast.show { display: block; }
+        .toast.success { border-color: var(--accent-green); }
+        .toast.error { border-color: var(--accent-pink); }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .temperature {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .temp-hot { background: rgba(255, 0, 170, 0.1); color: var(--accent-pink); }
+        .temp-warm { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
+        .temp-cold { background: rgba(57, 255, 20, 0.1); color: var(--accent-green); }
         @media (max-width: 768px) {
+            body { padding: 1rem; }
             .leads-table { font-size: 0.875rem; }
             .leads-table th,
             .leads-table td { padding: 0.5rem; }
+            .stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Painel de Leads</h1>
-        <button class="logout-btn" onclick="logout()">Sair</button>
+        <div>
+            <h1 class="font-syne">Painel de Leads</h1>
+            <p style="color: var(--text-gray); font-size: 0.875rem; margin-top: 0.25rem;">Gui Magellane • Pipeline 2025</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="exportCSV()">📥 Exportar CSV</button>
+            <button class="btn btn-primary" onclick="openCalendly()">📅 Agendar</button>
+            <button class="btn btn-secondary" onclick="logout()">Sair</button>
+        </div>
+    </div>
+    
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Todos</button>
+        <button class="filter-btn" data-filter="hoje" onclick="setFilter('hoje')">Hoje</button>
+        <button class="filter-btn" data-filter="quentes" onclick="setFilter('quentes')">Quentes</button>
+        <button class="filter-btn" data-filter="novos" onclick="setFilter('novos')">Novos</button>
     </div>
     
     <div class="stats" id="stats"></div>
@@ -471,6 +582,7 @@ ADMIN_HTML = '''<!DOCTYPE html>
                 <th>Contato</th>
                 <th>Mensagem</th>
                 <th>Orçamento</th>
+                <th>Status</th>
                 <th>Data</th>
                 <th>Ações</th>
             </tr>
@@ -480,7 +592,115 @@ ADMIN_HTML = '''<!DOCTYPE html>
     
     <div class="empty" id="empty" style="display: none;">Nenhum lead encontrado.</div>
     
+    <div id="toast" class="toast"></div>
+    
     <script>
+        let allLeads = [];
+        let currentFilter = 'all';
+        
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        function getTemperature(timestamp) {
+            const diffHours = (Date.now() - new Date(timestamp).getTime()) / (1000 * 60 * 60);
+            if (diffHours < 2) return { label: 'FERVENDO', class: 'temp-hot' };
+            if (diffHours < 24) return { label: 'MORNO', class: 'temp-warm' };
+            return { label: 'FRIO', class: 'temp-cold' };
+        }
+        
+        function formatCurrency(val) {
+            if (!val || val === '-') return '-';
+            if (typeof val === 'number') {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+            }
+            // Se for string, tentar parse simples
+            const num = parseFloat(String(val).replace(/[^0-9,]/g, '').replace(',', '.'));
+            if (isNaN(num)) return val;
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
+        }
+        
+        function calculatePipelineValue(leads) {
+            // Cálculo simples: contar leads com orçamento definido
+            // Grug-approved: simples, direto, sem parsing complexo
+            const withBudget = leads.filter(l => l.budget && l.budget !== '-').length;
+            // Estimativa conservadora: média de 20k por lead com orçamento
+            return withBudget * 20000;
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            renderLeads();
+        }
+        
+        function filterLeads(leads) {
+            const now = Date.now();
+            switch(currentFilter) {
+                case 'hoje':
+                    return leads.filter(l => {
+                        const leadTime = new Date(l.created_at).getTime();
+                        return (now - leadTime) < (1000 * 60 * 60 * 24);
+                    });
+                case 'quentes':
+                    return leads.filter(l => {
+                        const leadTime = new Date(l.created_at).getTime();
+                        return (now - leadTime) < (1000 * 60 * 60 * 2);
+                    });
+                case 'novos':
+                    return leads.filter(l => {
+                        const leadTime = new Date(l.created_at).getTime();
+                        return (now - leadTime) < (1000 * 60 * 60 * 24 * 7);
+                    });
+                default:
+                    return leads;
+            }
+        }
+        
+        function renderLeads() {
+            const filtered = filterLeads(allLeads);
+            const tbody = document.getElementById('leadsTable');
+            
+            if (filtered.length === 0) {
+                document.getElementById('empty').style.display = 'block';
+                tbody.innerHTML = '';
+            } else {
+                document.getElementById('empty').style.display = 'none';
+                tbody.innerHTML = filtered.map(lead => {
+                    const temp = getTemperature(lead.created_at);
+                    const contact = lead.email || lead.contact || '-';
+                    // Extrair telefone de forma mais robusta (10-15 dígitos)
+                    const phoneMatch = String(contact).match(/(\d{10,15})/);
+                    const phone = phoneMatch ? phoneMatch[1] : '';
+                    const safeName = escapeHtml(lead.name);
+                    return `
+                        <tr>
+                            <td>${lead.id}</td>
+                            <td><strong>${safeName}</strong></td>
+                            <td>${escapeHtml(contact)}</td>
+                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(lead.message || '-')}</td>
+                            <td>${escapeHtml(lead.budget || '-')}</td>
+                            <td><span class="temperature ${temp.class}">${temp.label}</span></td>
+                            <td>${formatDate(lead.created_at)}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${phone ? `<button class="btn btn-whatsapp" onclick="openWhatsApp('${phone}', '${safeName}')" title="WhatsApp">💬</button>` : ''}
+                                    <button class="btn btn-danger" onclick="deleteLead(${lead.id})">Deletar</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+        
         async function loadLeads() {
             const res = await fetch('/api/leads');
             if (!res.ok) {
@@ -488,48 +708,111 @@ ADMIN_HTML = '''<!DOCTYPE html>
                     window.location.reload();
                     return;
                 }
+                showToast('Erro ao carregar leads', 'error');
                 return;
             }
             const data = await res.json();
-            const leads = data.leads || [];
+            allLeads = data.leads || [];
             
-            // Stats
+            const filtered = filterLeads(allLeads);
+            const pipelineValue = calculatePipelineValue(allLeads);
+            const hojeCount = allLeads.filter(l => {
+                const leadTime = new Date(l.created_at).getTime();
+                return (Date.now() - leadTime) < (1000 * 60 * 60 * 24);
+            }).length;
+            const quentesCount = allLeads.filter(l => {
+                const leadTime = new Date(l.created_at).getTime();
+                return (Date.now() - leadTime) < (1000 * 60 * 60 * 2);
+            }).length;
+            
             document.getElementById('stats').innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-value">${leads.length}</div>
+                    <div class="stat-value">${allLeads.length}</div>
                     <div class="stat-label">Total de Leads</div>
+                    <div class="stat-sub">${filtered.length} ${currentFilter !== 'all' ? 'filtrados' : ''}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">${leads.filter(l => l.form_type === 'inline').length}</div>
-                    <div class="stat-label">Formulário Inline</div>
+                    <div class="stat-value" style="color: var(--accent-pink);">${quentesCount}</div>
+                    <div class="stat-label">Leads Quentes</div>
+                    <div class="stat-sub">Últimas 2 horas</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">${leads.filter(l => l.form_type === 'modal').length}</div>
-                    <div class="stat-label">Formulário Modal</div>
+                    <div class="stat-value" style="color: var(--accent-green);">${formatCurrency(pipelineValue)}</div>
+                    <div class="stat-label">Pipeline Estimado</div>
+                    <div class="stat-sub">${hojeCount} novos hoje</div>
                 </div>
             `;
             
-            // Table
-            const tbody = document.getElementById('leadsTable');
-            if (leads.length === 0) {
-                document.getElementById('empty').style.display = 'block';
-                tbody.innerHTML = '';
-            } else {
-                document.getElementById('empty').style.display = 'none';
-                tbody.innerHTML = leads.map(lead => `
-                    <tr>
-                        <td>${lead.id}</td>
-                        <td>${escapeHtml(lead.name)}</td>
-                        <td>${escapeHtml(lead.email || lead.contact || '-')}</td>
-                        <td>${escapeHtml(lead.message || '-')}</td>
-                        <td>${escapeHtml(lead.budget || '-')}</td>
-                        <td>${formatDate(lead.created_at)}</td>
-                        <td>
-                            <button class="delete-btn" onclick="deleteLead(${lead.id})">Deletar</button>
-                        </td>
-                    </tr>
-                `).join('');
+            renderLeads();
+        }
+        
+        function exportCSV() {
+            if (allLeads.length === 0) {
+                showToast('Nenhum lead para exportar', 'error');
+                return;
             }
+            
+            // Escapar valores CSV corretamente (Grug-approved: simples e direto)
+            function escapeCSV(val) {
+                if (!val) return '';
+                const str = String(val);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            }
+            
+            const headers = ['ID', 'Nome', 'Email', 'Contato', 'Mensagem', 'Orçamento', 'Tipo', 'Data'];
+            const rows = allLeads.map(l => [
+                l.id,
+                escapeCSV(l.name),
+                escapeCSV(l.email || ''),
+                escapeCSV(l.contact || ''),
+                escapeCSV(l.message || ''),
+                escapeCSV(l.budget || ''),
+                escapeCSV(l.form_type || ''),
+                new Date(l.created_at).toLocaleDateString('pt-BR')
+            ]);
+            
+            const csvContent = [headers.map(escapeCSV), ...rows].map(row => row.join(',')).join('\n');
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `leads-gui-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showToast('CSV exportado com sucesso!', 'success');
+        }
+        
+        function openCalendly(lead = null) {
+            if (typeof Calendly !== 'undefined') {
+                Calendly.initPopupWidget({
+                    url: 'https://calendly.com/gui-magellane/reuniao-de-briefing',
+                    prefill: lead ? {
+                        name: lead.name || '',
+                        email: lead.email || ''
+                    } : {}
+                });
+            } else {
+                showToast('Calendly carregando... Tente novamente em 2 segundos.', 'error');
+                // Retry após 2 segundos
+                setTimeout(() => {
+                    if (typeof Calendly !== 'undefined') {
+                        openCalendly(lead);
+                    }
+                }, 2000);
+            }
+        }
+        
+        function openWhatsApp(phone, name) {
+            const cleanPhone = phone.replace(/[^0-9]/g, '');
+            const message = `Oi ${name.split(' ')[0]}, tudo certo? Sobre o job que você pediu no site...`;
+            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
         }
         
         async function deleteLead(id) {
@@ -537,9 +820,10 @@ ADMIN_HTML = '''<!DOCTYPE html>
             
             const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
             if (res.ok) {
+                showToast('Lead deletado com sucesso', 'success');
                 loadLeads();
             } else {
-                alert('Erro ao deletar lead');
+                showToast('Erro ao deletar lead', 'error');
             }
         }
         
@@ -549,6 +833,7 @@ ADMIN_HTML = '''<!DOCTYPE html>
         }
         
         function escapeHtml(text) {
+            if (!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
@@ -556,12 +841,29 @@ ADMIN_HTML = '''<!DOCTYPE html>
         
         function formatDate(dateStr) {
             const date = new Date(dateStr);
-            return date.toLocaleString('pt-BR');
+            return date.toLocaleString('pt-BR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
         
         loadLeads();
-        setInterval(loadLeads, 30000); // Atualizar a cada 30s
+        setInterval(loadLeads, 30000);
     </script>
 </body>
 </html>'''
+
+# Painel admin (HTML/CSS/JS vanilla - Grug-approved)
+@app.route('/admin')
+def admin():
+    if 'logged_in' not in session:
+        return render_template_string(LOGIN_HTML), 200
+    return render_template_string(ADMIN_HTML), 200
+
+if __name__ == '__main__':
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
 
