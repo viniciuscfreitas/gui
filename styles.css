@@ -673,6 +673,7 @@ textarea:focus-visible {
   gap: 1rem;
   flex-wrap: nowrap;
   padding: 0;
+  width: max-content;
 }
 
 @media (min-width: 768px) {

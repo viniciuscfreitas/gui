@@ -114,34 +114,9 @@ function renderLogos() {
     </div>
   `).join('');
 
-  // Aguarda imagens carregarem antes de calcular largura
-  const images = carousel.querySelectorAll('img');
-  let loadedCount = 0;
-
-  if (images.length === 0) {
-    // Se não há imagens, já pode ativar animação
-    carousel.style.width = 'max-content';
-    return;
-  }
-
-  const checkAndStart = () => {
-    loadedCount++;
-    if (loadedCount === images.length) {
-      // Todas imagens carregadas - garante largura e inicia animação
-      carousel.style.width = 'max-content';
-      requestAnimationFrame(() => {
-        carousel.offsetHeight; // Force reflow
-      });
-    }
-  };
-
-  images.forEach(img => {
-    if (img.complete) {
-      checkAndStart();
-    } else {
-      img.addEventListener('load', checkAndStart, { once: true });
-      img.addEventListener('error', checkAndStart, { once: true });
-    }
+  // Força recálculo de layout para garantir que animação funcione
+  requestAnimationFrame(() => {
+    carousel.offsetHeight; // Force reflow
   });
 }
 
