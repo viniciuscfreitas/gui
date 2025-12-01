@@ -523,4 +523,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const leadFormModal = document.getElementById('lead-form-modal');
   if (projectModal) projectModal.style.display = 'none';
   if (leadFormModal) leadFormModal.style.display = 'none';
+
+  // --- NEW FORM LOGIC ---
+  const inlineForm = document.getElementById('contact-form-inline');
+  if (inlineForm) {
+    inlineForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const btn = this.querySelector('button');
+      const originalText = btn.innerText;
+      btn.innerText = 'Enviando...';
+      btn.disabled = true;
+
+      // Simulação de envio
+      setTimeout(() => {
+        // Hide form, Show success
+        const formView = document.getElementById('form-view');
+        const thankYouView = document.getElementById('thank-you-view');
+
+        if (formView) formView.style.display = 'none';
+        if (thankYouView) thankYouView.style.display = 'block';
+
+        console.log("Lead capturado:", {
+          name: this.name.value,
+          contact: this.contact.value,
+          message: this.message.value
+        });
+
+        // Scroll suave para o topo da mensagem de sucesso
+        const contactSection = document.getElementById('contact');
+        if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
+      }, 1500);
+    });
+  }
 });

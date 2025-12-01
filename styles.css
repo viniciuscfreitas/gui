@@ -5,6 +5,7 @@
   --bg-black: #000000;
   --text-white: #ffffff;
   /* Adjusted red for WCAG AAA: #f70205 -> #ff3333 (7.1:1 contrast on black) */
+  /* Red Accent: #ff3333 */
   --accent-gold: #ff3333;
   /* WCAG 2.2 AAA Compliance: #b3b3b3 on #000000 is > 7:1 contrast ratio */
   --gray-caption: #b3b3b3;
@@ -16,8 +17,10 @@
 html {
   scroll-behavior: smooth;
   /* Hide scrollbar but keep scroll functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
 /* Hide scrollbar for Chrome/Safari */
@@ -39,12 +42,16 @@ body {
   line-height: 1.6;
   font-size: 16px;
   /* Hide scrollbar but keep scroll functionality */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
 
 /* Box-sizing for all elements */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -60,16 +67,29 @@ body {
   font-weight: 400;
 }
 
-.text-hero { font-size: clamp(1.125rem, 2vw, 1.5rem); } /* Fluid typography */
-.text-caption { font-size: 0.75rem; line-height: 1.4; }
+.text-hero {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+}
+
+/* Fluid typography */
+.text-caption {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
 
 
 /* 5. Custom Focus Management - WCAG 2025 Compliant (No outline ring) */
-*:focus { outline: none; }
+*:focus {
+  outline: none;
+}
 
 /* Focus Visible - Visual indicators without outline ring (WCAG 2025 compliant) */
 /* Uses border-color and box-shadow instead of outline for focus indication */
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: none;
   border-color: var(--accent-gold);
   color: var(--text-white);
@@ -87,19 +107,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   z-index: 9999;
   font-weight: bold;
 }
+
 .skip-link:focus {
   top: 0;
 }
 
 /* 7. Animations & Interactions */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 .animate-fade-in {
@@ -108,8 +139,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 .animate-scroll {
   animation: scroll 30s linear infinite;
-  will-change: transform; /* Performance hint */
+  will-change: transform;
+  /* Performance hint */
 }
+
 .animate-scroll:hover {
   animation-play-state: paused;
 }
@@ -125,7 +158,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: var(--accent-gold);
   transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.cta-gold:hover, .cta-gold:focus-visible {
+
+.cta-gold:hover,
+.cta-gold:focus-visible {
   background: var(--accent-gold);
   color: #000;
   box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
@@ -139,7 +174,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   width: 100%;
   height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.2) 100%);
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
   z-index: 5;
 }
 
@@ -238,7 +273,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   flex-shrink: 0;
 }
 
-.hero-cta:hover, .hero-cta:focus-visible {
+.hero-cta:hover,
+.hero-cta:focus-visible {
   background: var(--accent-gold);
   color: #000;
   box-shadow: 0 0 20px rgba(255, 51, 51, 0.2);
@@ -281,10 +317,24 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     row-gap: 6rem;
   }
 
-  .portfolio-item:nth-child(1) { grid-column: span 7; }
-  .portfolio-item:nth-child(2) { grid-column: 5 / span 5; grid-column-start: 8; margin-top: 6rem; }
-  .portfolio-item:nth-child(3) { grid-column: span 5; }
-  .portfolio-item:nth-child(4) { grid-column: 6 / span 7; margin-top: 3rem; }
+  .portfolio-item:nth-child(1) {
+    grid-column: span 7;
+  }
+
+  .portfolio-item:nth-child(2) {
+    grid-column: 5 / span 5;
+    grid-column-start: 8;
+    margin-top: 6rem;
+  }
+
+  .portfolio-item:nth-child(3) {
+    grid-column: span 5;
+  }
+
+  .portfolio-item:nth-child(4) {
+    grid-column: 6 / span 7;
+    margin-top: 3rem;
+  }
 }
 
 .portfolio-card {
@@ -417,7 +467,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   min-height: 44px;
 }
 
-.cta-link:hover, .cta-link:focus-visible {
+.cta-link:hover,
+.cta-link:focus-visible {
   color: white;
   border-bottom-color: white;
 }
@@ -845,7 +896,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-family: 'Syne', sans-serif;
 }
 
-.contact-cta:hover, .contact-cta:focus-visible {
+.contact-cta:hover,
+.contact-cta:focus-visible {
   background: white;
 }
 
@@ -873,7 +925,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   text-underline-offset: 2px;
 }
 
-.contact-link:hover, .contact-link:focus-visible {
+.contact-link:hover,
+.contact-link:focus-visible {
   color: white;
   text-decoration-color: currentColor;
 }
@@ -1064,7 +1117,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   min-height: 44px;
 }
 
-.modal-cta:hover, .modal-cta:focus-visible {
+.modal-cta:hover,
+.modal-cta:focus-visible {
   background: var(--accent-gold);
   color: #000;
 }
@@ -1221,4 +1275,107 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: var(--gray-caption);
   margin-top: 0.75rem;
   line-height: 1.6;
+}
+
+/* --- NEW CONTACT FORM STYLES --- */
+.contact-container {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+  background: #0a0a0a;
+  padding: 3rem 2rem;
+  border: 1px solid #222;
+  position: relative;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-input {
+  width: 100%;
+  background: #000;
+  border: none;
+  border-bottom: 1px solid #333;
+  color: white;
+  padding: 1rem 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  border-radius: 0;
+  /* Reset default border radius */
+}
+
+.form-input:focus {
+  border-color: var(--accent-gold);
+  background: #111;
+  /* Subtle visual feedback */
+  outline: none;
+  box-shadow: none;
+  /* Explicitly remove any shadow ring */
+}
+
+.form-input::placeholder {
+  color: #777;
+  /* WCAG AA Compliant (4.5:1 against #000) */
+}
+
+.helper-text {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 1.5rem;
+  line-height: 1.4;
+}
+
+/* Button Gold Style */
+.btn-gold {
+  background-color: var(--accent-gold);
+  color: #000;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1.2rem 3rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  text-decoration: none;
+}
+
+.btn-gold:hover {
+  background-color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 51, 51, 0.2);
+  /* Using current red accent for shadow */
+}
+
+/* Thank You View */
+.thank-you-view {
+  display: none;
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+  padding: 2rem 0;
+}
+
+.check-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem auto;
+  color: var(--accent-gold);
 }

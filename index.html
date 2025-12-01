@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gui Magellane | Direção Criativa High-Ticket para marcas de moda e audiovisual. Transforme visuais em impacto com estratégia visual que converte.">
-  <meta name="keywords" content="direção criativa, fotografia, vídeo, moda, audiovisual, produção visual, campanhas publicitárias">
+  <meta name="description"
+    content="Gui Magellane | Direção Criativa High-Ticket para marcas de moda e audiovisual. Transforme visuais em impacto com estratégia visual que converte.">
+  <meta name="keywords"
+    content="direção criativa, fotografia, vídeo, moda, audiovisual, produção visual, campanhas publicitárias">
   <meta name="author" content="Gui Magellane">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://guimagellane.com/">
   <meta property="og:title" content="Gui Magellane | Direção Criativa High-Ticket">
-  <meta property="og:description" content="Direção criativa que transforma visuais em impacto. Estratégia visual que converte.">
+  <meta property="og:description"
+    content="Direção criativa que transforma visuais em impacto. Estratégia visual que converte.">
   <meta property="og:image" content="https://guimagellane.com/og-image.jpg">
 
   <!-- Twitter -->
@@ -24,7 +28,8 @@
   <!-- Preconnect for Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap"
+    rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
@@ -37,13 +42,16 @@
 
   <title>Gui Magellane | Direção Criativa High-Ticket</title>
 </head>
+
 <body>
   <a href="#main-content" class="skip-link">Pular para conteúdo</a>
   <div class="vignette-overlay" aria-hidden="true"></div>
 
   <!-- Hero Section -->
   <header class="hero-section" role="banner">
-    <video autoplay muted loop playsinline preload="metadata" poster="https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1920" class="hero-video">
+    <video autoplay muted loop playsinline preload="metadata"
+      poster="https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1920"
+      class="hero-video">
       <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4" type="video/mp4">
     </video>
 
@@ -90,15 +98,47 @@
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
       <div class="reveal-item">
-        <div class="contact-card">
-          <h3 class="contact-title">Pronto para elevar sua marca?</h3>
-          <div class="contact-urgency" id="contact-urgency">
-            <p>Vagas limitadas para Q1 2026</p>
+        <div class="contact-container reveal-item">
+          <!-- View 1: Formulário -->
+          <div id="form-view">
+            <h3 class="font-title" style="font-size: 1.8rem; margin-bottom: 0.5rem; color: white;">Me conta rapidinho o
+              que você precisa</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 2.5rem;">Sem enrolação. Direto ao ponto.</p>
+
+            <form id="contact-form-inline">
+              <div class="form-group">
+                <label for="contact-name" class="form-label">Nome</label>
+                <input id="contact-name" type="text" name="name" class="form-input" required placeholder="Seu nome"
+                  autocomplete="name">
+              </div>
+
+              <div class="form-group">
+                <label for="contact-info" class="form-label">WhatsApp ou E-mail</label>
+                <input id="contact-info" type="text" name="contact" class="form-input" required
+                  placeholder="(11) 99999-9999" autocomplete="email">
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message" class="form-label">O que você tá querendo fazer?</label>
+                <textarea id="contact-message" name="message" class="form-input" rows="3" required
+                  placeholder="Ex: Campanha de verão, vídeo institucional..."></textarea>
+              </div>
+
+              <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                Quero conversar com o Gui
+              </button>
+            </form>
+
+            <p class="helper-text">Chegou por indicação? É só falar aqui. Respondo em até 2h úteis.</p>
           </div>
-          <button class="contact-cta" data-form-preset="custom">Solicite Proposta Sob Medida</button>
-          <div class="contact-links">
-            <a href="https://instagram.com/g.magellane" target="_blank" rel="noopener noreferrer" class="contact-link">@g.magellane</a>
-            <a href="mailto:gui@magellane.tv" class="contact-link">gui@magellane.tv</a>
+
+          <!-- View 2: Thank You -->
+          <div id="thank-you-view" class="thank-you-view">
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <h3 class="font-title" style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">Beleza, recebi.</h3>
+            <p style="color: #ccc; margin-bottom: 2rem;">Em até 2h úteis eu te chamo.</p>
           </div>
         </div>
       </div>
@@ -139,7 +179,8 @@
   </div>
 
   <!-- Lead Form Modal -->
-  <div id="lead-form-modal" class="modal-overlay form-modal" role="dialog" aria-modal="true" aria-labelledby="form-title">
+  <div id="lead-form-modal" class="modal-overlay form-modal" role="dialog" aria-modal="true"
+    aria-labelledby="form-title">
     <div class="form-container">
       <button class="form-close" aria-label="Fechar" id="form-close-btn"></button>
 
@@ -199,4 +240,5 @@
 
   <script src="app.js"></script>
 </body>
+
 </html>
