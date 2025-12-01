@@ -1,0 +1,16 @@
+{
+  "name": "Gui Magellane | Direção Criativa",
+  "short_name": "Gui Magellane",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Direção criativa high-ticket para marcas de moda e audiovisual.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

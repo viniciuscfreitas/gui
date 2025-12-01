@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gui Magellane | Direção Criativa High-Ticket para marcas de moda e audiovisual. Transforme visuais em impacto com estratégia visual que converte.">
+  <meta name="keywords" content="direção criativa, fotografia, vídeo, moda, audiovisual, produção visual, campanhas publicitárias">
+  <meta name="author" content="Gui Magellane">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://guimagellane.com/">
+  <meta property="og:title" content="Gui Magellane | Direção Criativa High-Ticket">
+  <meta property="og:description" content="Direção criativa que transforma visuais em impacto. Estratégia visual que converte.">
+  <meta property="og:image" content="https://guimagellane.com/og-image.jpg">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://guimagellane.com/">
+  <meta property="twitter:title" content="Gui Magellane | Direção Criativa High-Ticket">
+  <meta property="twitter:description" content="Direção criativa que transforma visuais em impacto.">
+  <meta property="twitter:image" content="https://guimagellane.com/og-image.jpg">
+
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://guimagellane.com/">
+
+  <title>Gui Magellane | Direção Criativa High-Ticket</title>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Pular para conteúdo</a>
+  <div class="vignette-overlay" aria-hidden="true"></div>
+
+  <!-- Hero Section -->
+  <header class="hero-section" role="banner">
+    <video autoplay muted loop playsinline preload="metadata" poster="https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1920" class="hero-video">
+      <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4" type="video/mp4">
+    </video>
+
+    <div class="hero-content">
+      <h1 class="hero-title">GUI MAGELLANE</h1>
+      <p class="hero-subtitle">Direção criativa que transforma visuais em impacto</p>
+      <button class="cta-gold hero-cta" aria-label="Agende conversa estratégica" id="hero-cta-btn">
+        Agende conversa estratégica
+      </button>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Portfolio Photos Grid -->
+    <section class="portfolio-section" aria-label="Portfólio Fotográfico">
+      <div class="portfolio-grid"></div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="reveal-item">
+        <h2 class="cta-heading">Eu realizo o que<br>você hesita em visionar.</h2>
+        <div class="cta-button-wrapper">
+          <button class="cta-link" data-form-preset="custom">Descubra como elevar sua marca</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video Portfolio -->
+    <section class="video-section" aria-label="Portfólio de Vídeo">
+      <div class="video-grid"></div>
+    </section>
+
+    <!-- Logo Carousel -->
+    <section class="logo-section" aria-label="Carrossel de Clientes">
+      <div class="logo-carousel animate-scroll"></div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials-section" aria-label="Depoimentos">
+      <div class="testimonials-grid"></div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+      <div class="reveal-item">
+        <div class="contact-card">
+          <h3 class="contact-title">Pronto para elevar sua marca?</h3>
+          <div class="contact-urgency" id="contact-urgency">
+            <p>Vagas limitadas para Q1 2026</p>
+          </div>
+          <button class="contact-cta" data-form-preset="custom">Solicite Proposta Sob Medida</button>
+          <div class="contact-links">
+            <a href="https://instagram.com/g.magellane" target="_blank" rel="noopener noreferrer" class="contact-link">@g.magellane</a>
+            <a href="mailto:gui@magellane.tv" class="contact-link">gui@magellane.tv</a>
+          </div>
+        </div>
+      </div>
+      <footer class="site-footer">
+        <p>São Paulo • 2026</p>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Project Modal -->
+  <div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" aria-label="Fechar" id="project-modal-close"></button>
+    <div class="modal-content">
+      <div class="modal-media">
+        <img id="modal-image" src="" alt="" loading="lazy">
+        <video id="modal-video" src="" controls autoplay loop style="display: none;"></video>
+      </div>
+      <div class="modal-info">
+        <div class="modal-details">
+          <div class="modal-field">
+            <p class="modal-label">Cliente</p>
+            <p id="modal-title" class="modal-value"></p>
+          </div>
+          <div class="modal-field">
+            <p class="modal-label">Essência</p>
+            <p id="modal-essence" class="modal-essence-text"></p>
+          </div>
+          <div class="modal-field">
+            <p class="modal-label">Resultado</p>
+            <p id="modal-result" class="modal-result-text"></p>
+          </div>
+        </div>
+        <div class="modal-cta-wrapper">
+          <button class="modal-cta" data-form-preset="similar">Inicie Projeto Similar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lead Form Modal -->
+  <div id="lead-form-modal" class="modal-overlay form-modal" role="dialog" aria-modal="true" aria-labelledby="form-title">
+    <div class="form-container">
+      <button class="form-close" aria-label="Fechar" id="form-close-btn"></button>
+
+      <div id="form-step-1">
+        <h3 id="form-title" class="form-title">Proposta Sob Medida</h3>
+        <p class="form-subtitle">Estratégia visual que converte.</p>
+        <form id="lead-form" class="lead-form">
+          <div class="form-field">
+            <label for="name" class="form-label">Nome Completo</label>
+            <input id="name" name="name" type="text" required class="form-input" placeholder="Seu nome">
+          </div>
+          <div class="form-field">
+            <label for="email" class="form-label">Email Profissional</label>
+            <input id="email" name="email" type="email" required class="form-input" placeholder="seu@empresa.com">
+          </div>
+          <div class="form-field">
+            <label for="budget" class="form-label">Investimento Estimado</label>
+            <select id="budget" name="budget" class="form-select">
+              <option value="">Selecione o escopo</option>
+              <option value="10k-50k">Produção (R$ 10k - 50k)</option>
+              <option value="custom">Projeto Especial (+50k)</option>
+            </select>
+          </div>
+          <button type="submit" class="form-submit" id="form-submit-btn">Solicite Proposta</button>
+        </form>
+      </div>
+
+      <div id="form-step-2" style="display: none;">
+        <div class="form-success">
+          <div id="form-success-icon" class="success-icon"></div>
+          <h3 class="form-title">Recebido.</h3>
+          <p class="form-success-text">Em até 24h entraremos em contato.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Gui Magellane",
+    "jobTitle": "Diretor Criativo",
+    "url": "https://guimagellane.com",
+    "sameAs": [
+      "https://instagram.com/g.magellane"
+    ],
+    "email": "gui@magellane.tv",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "São Paulo",
+      "addressCountry": "BR"
+    }
+  }
+  </script>
+
+  <script src="app.js"></script>
+</body>
+</html>
