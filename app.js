@@ -180,6 +180,13 @@ function openProject(id) {
     modalImage.style.display = 'none';
     modalVideo.style.display = 'block';
     modalVideo.src = project.src || '';
+    modalVideo.onerror = () => {
+      // Fallback: mostrar thumbnail como imagem se vídeo falhar
+      modalVideo.style.display = 'none';
+      modalImage.style.display = 'block';
+      modalImage.src = project.thumb || '';
+      modalImage.alt = project.title || '';
+    };
     modalVideo.play().catch(() => {
       // Autoplay blocked - user interaction required
       // Video will play when user clicks
@@ -509,6 +516,21 @@ function renderStaticSVGs() {
 
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
+  // Hero video fallback
+  const heroVideo = document.getElementById('hero-video');
+  if (heroVideo) {
+    heroVideo.onerror = () => {
+      // Fallback: usar poster como background se vídeo falhar
+      heroVideo.style.display = 'none';
+      const heroSection = heroVideo.closest('.hero-section');
+      if (heroSection) {
+        heroSection.style.backgroundImage = `url('${heroVideo.poster}')`;
+        heroSection.style.backgroundSize = 'cover';
+        heroSection.style.backgroundPosition = 'center';
+      }
+    };
+  }
+
   renderPortfolio();
   renderVideos();
   renderLogos();

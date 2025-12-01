@@ -28,8 +28,9 @@
   <!-- Preconnect for Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap"
-    rel="stylesheet">
+  <!-- Google Fonts - media trick para evitar render-blocking -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Syne:wght@700&display=swap"></noscript>
 
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
@@ -41,6 +42,9 @@
   <link rel="canonical" href="https://guimagellane.com/">
 
   <title>Gui Magellane | Direção Criativa High-Ticket</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3EG%3C/text%3E%3C/svg%3E">
 </head>
 
 <body>
@@ -51,7 +55,7 @@
   <header class="hero-section" role="banner">
     <video autoplay muted loop playsinline preload="metadata"
       poster="https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1920"
-      class="hero-video">
+      class="hero-video" id="hero-video">
       <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4" type="video/mp4">
     </video>
 
