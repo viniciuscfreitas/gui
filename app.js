@@ -29,6 +29,7 @@ const TESTIMONIALS = [
   { text: "Narrativa visual de outro nível.", author: "Mkt", from: "de Reserva", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
 ];
 
+
 // --- COMBINE DATA ---
 const ALL_PROJECTS = [...PROJECTS, ...VIDEOS.map(v => ({ ...v, type: 'video' }))];
 
@@ -42,8 +43,19 @@ const SVG_SPRITE = {
   check: '<polyline points="20 6 9 17 4 12"></polyline>'
 };
 
+const SVG_LABELS = {
+  arrow: 'Ver mais',
+  play: 'Reproduzir',
+  close: 'Fechar',
+  calendar: 'Calendário',
+  lock: 'Seguro',
+  check: 'Confirmado'
+};
+
 function createSVG(name, size = 14, className = '') {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="${className}">${SVG_SPRITE[name]}</svg>`;
+  const ariaLabel = SVG_LABELS[name] || '';
+  const ariaAttr = ariaLabel ? `aria-label="${ariaLabel}"` : 'aria-hidden="true"';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="${className}" ${ariaAttr}><title>${ariaLabel}</title>${SVG_SPRITE[name]}</svg>`;
 }
 
 // --- TEMPLATES ---
@@ -120,6 +132,7 @@ function renderTestimonials() {
   `).join('');
 }
 
+
 // --- SCROLL REVEAL ---
 function initScrollReveal() {
   const observer = new IntersectionObserver((entries) => {
@@ -156,6 +169,113 @@ function initExitIntent() {
   document.addEventListener('mouseleave', handleExitIntent);
 }
 
+// --- PARALLAX ---
+function initParallax() {
+  // WCAG 2025: Respect prefers-reduced-motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return;
+  }
+
+  const heroSection = document.querySelector('.hero-section');
+  if (!heroSection) return;
+
+  const parallaxBg = document.querySelector('.hero-parallax-bg');
+  const parallaxVideo = document.getElementById('hero-video');
+  const heroContent = document.querySelector('.hero-content');
+
+  if (!parallaxBg && !parallaxVideo) return;
+
+  let ticking = false;
+  const maxScroll = window.innerHeight * 1.5;
+  const parallaxSpeed = {
+    bg: 0.3,
+    video: 0.4,
+    content: 0.2
+  };
+
+  function updateParallax() {
+    const scrollY = window.scrollY;
+    const heroRect = heroSection.getBoundingClientRect();
+    const heroBottom = heroRect.bottom;
+
+    if (heroBottom <= 0 || scrollY > maxScroll) {
+      ticking = false;
+      return;
+    }
+
+    const scrollProgress = Math.min(scrollY / maxScroll, 1);
+    const normalizedScroll = scrollProgress;
+
+    if (parallaxBg) {
+      const bgY = normalizedScroll * parallaxSpeed.bg * 100;
+      parallaxBg.style.transform = `translateY(${bgY}px) translateZ(0)`;
+    }
+
+    if (parallaxVideo) {
+      const videoY = normalizedScroll * parallaxSpeed.video * 100;
+      parallaxVideo.style.transform = `translateY(${videoY}px) translateZ(0)`;
+    }
+
+    if (heroContent) {
+      const contentY = normalizedScroll * parallaxSpeed.content * 100;
+      heroContent.style.transform = `translateY(${contentY}px) translateZ(0)`;
+    }
+
+    ticking = false;
+  }
+
+  function requestTick() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', requestTick, { passive: true });
+  window.addEventListener('resize', () => {
+    updateParallax();
+  }, { passive: true });
+
+  updateParallax();
+}
+
+// --- WHATSAPP FLOAT ---
+function initWhatsAppFloat() {
+  const whatsappFloat = document.getElementById('whatsapp-float');
+  if (!whatsappFloat) return;
+
+  let hasShown = false;
+  const scrollThreshold = 0.3;
+  const timeThreshold = 10000; // 10 seconds
+
+  function showWhatsApp() {
+    if (hasShown) return;
+    hasShown = true;
+    whatsappFloat.classList.add('visible');
+  }
+
+  // Show after time threshold
+  setTimeout(() => {
+    if (!hasShown) {
+      showWhatsApp();
+    }
+  }, timeThreshold);
+
+  // Show after scroll threshold
+  function checkScroll() {
+    const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    if (scrollPercent >= scrollThreshold && !hasShown) {
+      showWhatsApp();
+      window.removeEventListener('scroll', checkScroll);
+    }
+  }
+
+  window.addEventListener('scroll', checkScroll, { passive: true });
+
+  // Check immediately if already scrolled
+  checkScroll();
+}
+
 // --- PROJECT MODAL ---
 function openProject(id) {
   if (!id || isNaN(id) || id <= 0) return;
@@ -185,7 +305,7 @@ function openProject(id) {
       modalVideo.style.display = 'none';
       modalImage.style.display = 'block';
       modalImage.src = project.thumb || '';
-      modalImage.alt = project.title || '';
+      modalImage.alt = project.title ? `Thumbnail do vídeo ${project.title}` : 'Thumbnail do vídeo';
     };
     modalVideo.play().catch(() => {
       // Autoplay blocked - user interaction required
@@ -195,7 +315,7 @@ function openProject(id) {
     modalVideo.style.display = 'none';
     modalImage.style.display = 'block';
     modalImage.src = project.src || '';
-    modalImage.alt = project.client || '';
+    modalImage.alt = project.client ? `Projeto para ${project.client}` : 'Imagem do projeto';
   }
 
   modal.style.display = 'flex';
@@ -514,6 +634,7 @@ function renderStaticSVGs() {
   }
 }
 
+
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
   // Hero video fallback
@@ -537,8 +658,10 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTestimonials();
   renderStaticSVGs();
 
+  initParallax();
   initScrollReveal();
   initExitIntent();
+  initWhatsAppFloat();
   initEventDelegation();
 
   const projectModal = document.getElementById('project-modal');

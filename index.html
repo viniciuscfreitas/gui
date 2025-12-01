@@ -53,12 +53,21 @@
 
   <!-- Hero Section -->
   <header class="hero-section" role="banner">
+    <!-- Parallax Layer 1: Background - Blurred SP image -->
+    <div class="hero-parallax-bg" aria-hidden="true"></div>
+
+    <!-- Parallax Layer 2: Video (existing) -->
     <video autoplay muted loop playsinline preload="metadata"
       poster="https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1920"
-      class="hero-video" id="hero-video">
+      class="hero-video" id="hero-video"
+      aria-label="Vídeo de fundo do hero">
       <source src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4" type="video/mp4">
     </video>
 
+    <!-- Parallax Layer 3: Texture overlay (subtle SP texture) -->
+    <div class="hero-texture-overlay" aria-hidden="true"></div>
+
+    <!-- Parallax Layer 5: Front - Content (existing) -->
     <div class="hero-content">
       <h1 class="hero-title">GUI MAGELLANE</h1>
       <p class="hero-subtitle">Direção criativa que transforma visuais em impacto</p>
@@ -105,9 +114,9 @@
         <div class="contact-container reveal-item">
           <!-- View 1: Formulário -->
           <div id="form-view">
-            <h3 class="font-title" style="font-size: 1.8rem; margin-bottom: 0.5rem; color: white;">Me conta rapidinho o
+            <h3 class="font-title contact-form-title">Me conta rapidinho o
               que você precisa</h3>
-            <p style="color: #666; font-size: 0.9rem; margin-bottom: 2.5rem;">Sem enrolação. Direto ao ponto.</p>
+            <p class="contact-form-subtitle">Sem enrolação. Direto ao ponto.</p>
 
             <form id="contact-form-inline">
               <div class="form-group">
@@ -128,7 +137,7 @@
                   placeholder="Ex: Campanha de verão, vídeo institucional..."></textarea>
               </div>
 
-              <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; margin-top: 1rem;">
+              <button type="submit" class="btn-gold btn-gold-full">
                 Quero conversar com o Gui
               </button>
             </form>
@@ -141,8 +150,8 @@
             <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
-            <h3 class="font-title" style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">Beleza, recebi.</h3>
-            <p style="color: #ccc; margin-bottom: 2rem;">Em até 2h úteis eu te chamo.</p>
+            <h3 class="font-title thank-you-title">Beleza, recebi.</h3>
+            <p class="thank-you-text">Em até 2h úteis eu te chamo.</p>
           </div>
         </div>
       </div>
@@ -152,13 +161,27 @@
     </section>
   </main>
 
+  <!-- WhatsApp Floating CTA -->
+  <!-- IMPORTANTE: Substitua 5511999999999 pelo seu número do WhatsApp (formato: 5511XXXXXXXXX) -->
+  <a href="https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20saber%20mais%20sobre%20direção%20criativa"
+     class="whatsapp-float"
+     id="whatsapp-float"
+     aria-label="Falar sobre seu projeto no WhatsApp"
+     target="_blank"
+     rel="noopener noreferrer">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span class="whatsapp-float-text">Falar sobre seu projeto</span>
+  </a>
+
   <!-- Project Modal -->
   <div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <button class="modal-close" aria-label="Fechar" id="project-modal-close"></button>
     <div class="modal-content">
       <div class="modal-media">
-        <img id="modal-image" src="" alt="" loading="lazy">
-        <video id="modal-video" src="" controls autoplay loop style="display: none;"></video>
+        <img id="modal-image" src="" alt="Imagem do projeto" loading="lazy">
+        <video id="modal-video" src="" controls autoplay loop class="modal-video-hidden" aria-label="Vídeo do projeto"></video>
       </div>
       <div class="modal-info">
         <div class="modal-details">
@@ -212,7 +235,7 @@
         </form>
       </div>
 
-      <div id="form-step-2" style="display: none;">
+      <div id="form-step-2" class="form-step-hidden">
         <div class="form-success">
           <div id="form-success-icon" class="success-icon"></div>
           <h3 class="form-title">Recebido.</h3>

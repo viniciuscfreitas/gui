@@ -11,9 +11,10 @@
   --gray-caption: #b3b3b3;
   --input-bg: #0a0a0a;
   --border-dim: #1a1a1a;
+  --whatsapp-green: #25D366;
 }
 
-/* 2. Base Settings */
+/* 2. Base Settings - WCAG 2025 Compliant */
 html {
   scroll-behavior: smooth;
   /* Hide scrollbar but keep scroll functionality */
@@ -21,6 +22,12 @@ html {
   /* Firefox */
   -ms-overflow-style: none;
   /* IE/Edge */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Hide scrollbar for Chrome/Safari */
@@ -112,7 +119,18 @@ textarea:focus-visible {
   top: 0;
 }
 
-/* 7. Animations & Interactions */
+/* 7. Animations & Interactions - WCAG 2025 Compliant */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -150,6 +168,12 @@ textarea:focus-visible {
 .reveal-item {
   transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-item {
+    transition: none;
+  }
 }
 
 /* Gold CTA */
@@ -198,24 +222,63 @@ textarea:focus-visible {
   background: #000000;
 }
 
+/* Parallax Layer 1: Background - Blurred SP skyline */
+.hero-parallax-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 120%;
+  background-image: url('https://images.unsplash.com/photo-1518495973542-4542c06a5843?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px) brightness(0.3);
+  opacity: 0.6;
+  will-change: transform;
+  transform: translateZ(0);
+  z-index: 1;
+}
+
+/* Parallax Layer 2: Video (existing) */
 .hero-video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 1;
+  opacity: 0.7;
+  will-change: transform;
+  transform: translateZ(0);
+  z-index: 2;
 }
 
+/* Parallax Layer 3: Texture overlay */
+.hero-texture-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 51, 51, 0.03) 2px, rgba(255, 51, 51, 0.03) 4px),
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 51, 51, 0.03) 2px, rgba(255, 51, 51, 0.03) 4px);
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: overlay;
+}
+
+/* Parallax Layer 4: Front - Content */
 .hero-content {
   position: absolute;
   bottom: 1.5rem;
   left: 1rem;
-  z-index: 20;
+  z-index: 5;
   mix-blend-mode: difference;
   color: white;
   max-width: calc(100% - 2rem);
   padding-right: 1rem;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 @media (min-width: 768px) {
@@ -352,7 +415,8 @@ textarea:focus-visible {
 
 .portfolio-card:hover {
   opacity: 0.8;
-  transform: scale(0.99);
+  transform: scale(1.03);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .portfolio-image-wrapper {
@@ -366,7 +430,7 @@ textarea:focus-visible {
 }
 
 .portfolio-card:hover .portfolio-image-wrapper {
-  border-color: rgba(255, 51, 51, 0.2);
+  border-color: rgba(255, 51, 51, 0.3);
 }
 
 .portfolio-image-wrapper img {
@@ -528,7 +592,8 @@ textarea:focus-visible {
 
 .video-card:hover {
   opacity: 0.8;
-  transform: scale(0.99);
+  transform: scale(1.03);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
 .video-thumb-wrapper {
@@ -541,7 +606,7 @@ textarea:focus-visible {
 }
 
 .video-card:hover .video-thumb-wrapper {
-  border-color: rgba(255, 51, 51, 0.2);
+  border-color: rgba(255, 51, 51, 0.3);
 }
 
 .video-thumb-wrapper img {
@@ -789,7 +854,7 @@ textarea:focus-visible {
 }
 
 .testimonial-text {
-  color: #ccc;
+  color: #d0d0d0;
   font-size: 0.875rem;
   font-style: italic;
   line-height: 1.6;
@@ -814,7 +879,7 @@ textarea:focus-visible {
 
 .testimonial-from {
   font-weight: 400;
-  color: #888;
+  color: var(--gray-caption);
 }
 
 /* Contact Section */
@@ -942,7 +1007,7 @@ textarea:focus-visible {
 
 .site-footer p {
   font-size: 0.625rem;
-  color: #888;
+  color: var(--gray-caption);
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
@@ -1067,7 +1132,7 @@ textarea:focus-visible {
 }
 
 .modal-label {
-  color: #888;
+  color: var(--gray-caption);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1082,7 +1147,7 @@ textarea:focus-visible {
 }
 
 .modal-essence-text {
-  color: #ccc;
+  color: #d0d0d0;
 }
 
 .modal-result-text {
@@ -1220,7 +1285,7 @@ textarea:focus-visible {
 }
 
 .form-input::placeholder {
-  color: #666;
+  color: #999;
 }
 
 .form-select {
@@ -1297,7 +1362,7 @@ textarea:focus-visible {
   display: block;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #888;
+  color: var(--gray-caption);
   margin-bottom: 0.5rem;
   letter-spacing: 0.05em;
   font-family: 'Inter', sans-serif;
@@ -1327,13 +1392,13 @@ textarea:focus-visible {
 }
 
 .form-input::placeholder {
-  color: #777;
+  color: #999;
   /* WCAG AA Compliant (4.5:1 against #000) */
 }
 
 .helper-text {
   font-size: 0.8rem;
-  color: #666;
+  color: #999;
   margin-top: 1.5rem;
   line-height: 1.4;
 }
@@ -1365,6 +1430,25 @@ textarea:focus-visible {
   /* Using current red accent for shadow */
 }
 
+/* Contact Form Styles */
+.contact-form-title {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.contact-form-subtitle {
+  color: var(--gray-caption);
+  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+.btn-gold-full {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
 /* Thank You View */
 .thank-you-view {
   display: none;
@@ -1373,9 +1457,100 @@ textarea:focus-visible {
   padding: 2rem 0;
 }
 
+.thank-you-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.thank-you-text {
+  color: var(--gray-caption);
+  margin-bottom: 2rem;
+}
+
+.modal-video-hidden {
+  display: none;
+}
+
+.form-step-hidden {
+  display: none;
+}
+
 .check-icon {
   width: 60px;
   height: 60px;
   margin: 0 auto 1.5rem auto;
   color: var(--accent-gold);
+}
+
+/* WhatsApp Floating CTA */
+.whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--whatsapp-green);
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  pointer-events: none;
+  min-height: 44px;
+  font-family: 'Inter', sans-serif;
+}
+
+.whatsapp-float.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.whatsapp-float:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 30px rgba(37, 211, 102, 0.5);
+  background: #22c55e;
+}
+
+.whatsapp-float:active {
+  transform: translateY(0) scale(1);
+}
+
+.whatsapp-float svg {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.whatsapp-float-text {
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .whatsapp-float {
+    padding: 0.875rem 1rem;
+    font-size: 0.75rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .whatsapp-float-text {
+    display: none;
+  }
+
+  .whatsapp-float {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
 }
