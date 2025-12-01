@@ -7,7 +7,7 @@ const PROJECTS = [
 ];
 
 const VIDEOS = [
-  { id: 5, thumb: "https://images.pexels.com/videos/3045163/free-video-3045163.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1000", src: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4", title: "LUZ VERMELHA", client: "Sevenn Originals", essence: "Tensão monocromática.", result: "Referência visual." },
+  { id: 5, thumb: "https://images.unsplash.com/photo-1478147427282-58a87a120781?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80", src: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_25fps.mp4", title: "LUZ VERMELHA", client: "Sevenn Originals", essence: "Tensão monocromática.", result: "Referência visual." },
   { id: 6, thumb: "https://images.pexels.com/videos/2491284/free-video-2491284.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1000", src: "https://videos.pexels.com/video-files/2491284/2491284-uhd_2560_1440_25fps.mp4", title: "NOIR MOTION", client: "Osklen", essence: "Slow motion 120fps.", result: "Campanha renovada." },
   { id: 7, thumb: "https://images.pexels.com/videos/1448735/free-video-1448735.jpg?auto=compress&cs=tinysrgb&dpr=2&w=1000", src: "https://videos.pexels.com/video-files/1448735/1448735-uhd_2560_1440_25fps.mp4", title: "URBAN BEAT", client: "Forum", essence: "Câmera run-and-gun.", result: "Viralização Reels." }
 ];
