@@ -100,7 +100,7 @@ function renderLogos() {
   const carousel = document.querySelector('.logo-carousel');
   if (!carousel) return;
 
-  // Duplicar apenas 2x - CSS animation faz loop infinito
+  // Duplicar 2x - CSS animation faz loop infinito movendo -50%
   const logosDuplicated = [...LOGOS, ...LOGOS];
 
   carousel.innerHTML = logosDuplicated.map((logo, i) => `
@@ -113,6 +113,9 @@ function renderLogos() {
       </div>
     </div>
   `).join('');
+
+  // Força recalculo de layout para garantir que animação funcione
+  carousel.offsetHeight;
 }
 
 function renderTestimonials() {
