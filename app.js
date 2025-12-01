@@ -29,7 +29,6 @@ const TESTIMONIALS = [
   { text: "Narrativa visual de outro nível.", author: "Mkt", from: "de Reserva", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" }
 ];
 
-
 // --- COMBINE DATA ---
 const ALL_PROJECTS = [...PROJECTS, ...VIDEOS.map(v => ({ ...v, type: 'video' }))];
 
@@ -435,7 +434,21 @@ async function handleFormSubmit(e) {
   }
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Enviar para backend
+    const response = await fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        budget: data.budget,
+        form_type: 'modal'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao enviar formulário');
+    }
 
     // Check if modal is still open before updating UI
     const modal = document.getElementById('lead-form-modal');
@@ -447,10 +460,6 @@ async function handleFormSubmit(e) {
       }
       return;
     }
-
-    // Form submission - API integration pending
-    // Data captured: name, email, budget
-    // TODO: Integrate with backend API when available
 
     formStep1.style.display = 'none';
     formStep2.style.display = 'block';
@@ -642,6 +651,7 @@ function renderStaticSVGs() {
 
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
+
   // Hero video fallback
   const heroVideo = document.getElementById('hero-video');
   if (heroVideo) {
@@ -677,7 +687,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- NEW FORM LOGIC ---
   const inlineForm = document.getElementById('contact-form-inline');
   if (inlineForm) {
-    inlineForm.addEventListener('submit', function (e) {
+    inlineForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const btn = this.querySelector('button');
@@ -685,8 +695,23 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.innerText = 'Enviando...';
       btn.disabled = true;
 
-      // Simulação de envio
-      setTimeout(() => {
+      try {
+        // Enviar para backend
+        const response = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: this.name.value,
+            contact: this.contact.value,
+            message: this.message.value,
+            form_type: 'inline'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao enviar formulário');
+        }
+
         // Hide form, Show success
         const formView = document.getElementById('form-view');
         const thankYouView = document.getElementById('thank-you-view');
@@ -694,16 +719,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (formView) formView.style.display = 'none';
         if (thankYouView) thankYouView.style.display = 'block';
 
-        console.log("Lead capturado:", {
-          name: this.name.value,
-          contact: this.contact.value,
-          message: this.message.value
-        });
-
         // Scroll suave para o topo da mensagem de sucesso
         const contactSection = document.getElementById('contact');
         if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
-      }, 1500);
+      } catch (error) {
+        // Erro silencioso - manter UX fluida
+        btn.innerText = originalText;
+        btn.disabled = false;
+        alert('Erro ao enviar. Tente novamente.');
+      }
     });
   }
 });
