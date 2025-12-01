@@ -130,10 +130,9 @@ textarea:focus-visible {
     scroll-behavior: auto !important;
   }
 
-  /* Exceção: Carrossel de logos pode ter animação reduzida mas ainda visível */
+  /* Exceção: Carrossel de logos mantém animação mesmo com prefers-reduced-motion */
   .logo-carousel.animate-scroll {
-    animation-duration: 60s !important;
-    animation-iteration-count: infinite !important;
+    animation: scroll 30s linear infinite !important;
   }
 }
 
@@ -670,7 +669,7 @@ textarea:focus-visible {
 }
 
 .logo-carousel {
-  display: inline-flex;
+  display: flex;
   gap: 1rem;
   flex-wrap: nowrap;
   padding: 0;
