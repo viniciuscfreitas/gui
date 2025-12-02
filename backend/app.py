@@ -361,501 +361,576 @@ LOGIN_HTML = '''<!DOCTYPE html>
 
 ADMIN_HTML = '''<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Leads • Gui Magellane</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
-    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <title>Admin • Gui</title>
+
+    <!-- Grug usa Tailwind CDN. Rápido. Fácil. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Grug usa Lucide Icons. Bonitos. -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Fonte Syne e Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --bg-black: #000;
-            --bg-dark: #0f0f0f;
-            --bg-card: #141414;
-            --border: #333;
-            --accent-gold: #d4af37;
-            --accent-pink: #ff00aa;
-            --accent-green: #39ff14;
-            --text-white: #fff;
-            --text-gray: #999;
-        }
+        /* Grug Configurações Visuais */
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-black);
-            color: var(--text-white);
-            padding: 2rem;
-            line-height: 1.6;
-        }
-        .font-syne { font-family: 'Syne', sans-serif; }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        h1 { font-size: 1.75rem; font-family: 'Syne', sans-serif; }
-        .header-actions {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            cursor: pointer;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
+            background-color: #0f0f0f;
+            color: #f3f4f6;
             font-family: 'Inter', sans-serif;
-        }
-        .btn-primary {
-            background: var(--accent-gold);
-            color: #000;
-        }
-        .btn-primary:hover { background: #c4a030; transform: translateY(-1px); }
-        .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text-white);
-            border: 1px solid var(--border);
-        }
-        .btn-secondary:hover { background: #1a1a1a; }
-        .btn-danger {
-            background: var(--accent-pink);
-            color: #000;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
-        }
-        .btn-danger:hover { background: #ff00cc; }
-        .filters {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            background: var(--bg-card);
-            color: var(--text-gray);
-            border: 1px solid var(--border);
-            cursor: pointer;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-        .filter-btn.active {
-            background: var(--accent-gold);
-            color: #000;
-            border-color: var(--accent-gold);
-        }
-        .filter-btn:hover:not(.active) {
-            background: #1a1a1a;
-            color: var(--text-white);
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            border-radius: 1rem;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover { transform: translateY(-2px); }
-        .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent-gold); font-family: 'Syne', sans-serif; }
-        .stat-label { font-size: 0.875rem; color: var(--text-gray); margin-top: 0.5rem; }
-        .stat-sub { font-size: 0.75rem; color: var(--text-gray); margin-top: 0.5rem; }
-        .leads-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--bg-card);
-            border-radius: 1rem;
             overflow: hidden;
+            /* App feel */
         }
-        .leads-table th,
-        .leads-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
+
+        .font-syne {
+            font-family: 'Syne', sans-serif;
         }
-        .leads-table th {
-            background: var(--bg-dark);
-            font-weight: 700;
-            color: var(--accent-gold);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+
+        /* Scrollbar invisível. Grug gosta limpo. */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
         }
-        .leads-table tr:hover { background: #1a1a1a; }
-        .leads-table tr:last-child td { border-bottom: none; }
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
+
+        /* Foco acessível mas bonito */
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid #d4af37;
+            outline-offset: 2px;
         }
-        .btn-whatsapp {
-            background: #25D366;
-            color: #000;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.75rem;
+
+        /* Utilitários de Animação */
+        .slide-in {
+            transform: translateX(0%);
         }
-        .btn-whatsapp:hover { background: #22c55e; }
-        .empty {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-gray);
+
+        .slide-out {
+            transform: translateX(100%);
         }
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: none;
-            animation: slideUp 0.3s ease;
+
+        /* Cores Neon Grug */
+        .text-neon-pink {
+            color: #ff00aa;
         }
-        .toast.show { display: block; }
-        .toast.success { border-color: var(--accent-green); }
-        .toast.error { border-color: var(--accent-pink); }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .bg-neon-pink-10 {
+            background-color: rgba(255, 0, 170, 0.1);
         }
-        .temperature {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 700;
+
+        .text-neon-green {
+            color: #39ff14;
         }
-        .temp-hot { background: rgba(255, 0, 170, 0.1); color: var(--accent-pink); }
-        .temp-warm { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
-        .temp-cold { background: rgba(57, 255, 20, 0.1); color: var(--accent-green); }
-        @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .leads-table { font-size: 0.875rem; }
-            .leads-table th,
-            .leads-table td { padding: 0.5rem; }
-            .stats { grid-template-columns: 1fr; }
+
+        .bg-neon-green-10 {
+            background-color: rgba(57, 255, 20, 0.1);
+        }
+
+        .text-gold {
+            color: #d4af37;
+        }
+
+        .bg-gold-10 {
+            background-color: rgba(212, 175, 55, 0.1);
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <div>
-            <h1 class="font-syne">Painel de Leads</h1>
-            <p style="color: var(--text-gray); font-size: 0.875rem; margin-top: 0.25rem;">Gui Magellane • Pipeline 2025</p>
-        </div>
-        <div class="header-actions">
-            <button class="btn btn-secondary" onclick="exportCSV()">📥 Exportar CSV</button>
-            <button class="btn btn-primary" onclick="openCalendly()">📅 Agendar</button>
-            <button class="btn btn-secondary" onclick="logout()">Sair</button>
-        </div>
+
+<body class="selection:bg-[#d4af37] selection:text-black">
+
+    <!-- SOM DE NOTIFICAÇÃO (Base64 para não depender de arquivo) -->
+    <audio id="notif-sound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"></audio>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 left-24 z-[100]"></div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="flex h-screen">
+
+        <!-- SIDEBAR RAIL -->
+        <aside class="w-24 bg-[#0f0f0f] flex flex-col items-center py-6 gap-8 z-50 border-r border-white/0">
+            <div
+                class="w-12 h-12 bg-[#d4af37] text-black rounded-xl flex items-center justify-center shadow-[4px_4px_0px_0px_#1a1a1a] cursor-pointer hover:-translate-y-0.5 transition-transform">
+                <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
+            </div>
+
+            <nav class="flex-1 flex flex-col gap-6 w-full px-2" id="nav-buttons">
+                <button onclick="app.setFilter('hoje')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-[#d4af37] bg-[#1a1a1a] shadow-[0_0_20px_rgba(212,175,55,0.1)] transition-all"
+                    data-filter="hoje" title="Visão Geral">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                </button>
+                <button onclick="app.setFilter('quentes')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-all"
+                    data-filter="quentes" title="Quentes">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-neon-pink"></i>
+                </button>
+                <button onclick="app.setFilter('whatsapp')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-all"
+                    data-filter="whatsapp" title="WhatsApp">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                </button>
+            </nav>
+
+            <div class="mb-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#d4af37] to-[#ff00aa] p-[2px]">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Gui" class="rounded-full bg-black">
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col relative overflow-hidden">
+
+            <!-- HEADER -->
+            <header class="px-10 py-8 flex items-center justify-between shrink-0">
+                <div>
+                    <h1 class="text-3xl font-syne font-bold text-white flex items-center gap-3">
+                        Olá, Gui! <span class="text-2xl animate-bounce">👋</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm mt-1">Hoje, <span id="current-date"></span> • Pipeline Atualizado
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="app.exportCSV()"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 hover:text-white hover:bg-[#252525] text-sm font-medium transition-all">
+                        <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar
+                            Mês</span>
+                    </button>
+                    <button onclick="app.openCalendly()"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 hover:text-white hover:bg-[#252525] text-sm font-medium transition-all">
+                        <i data-lucide="calendar-days" class="w-4 h-4"></i> <span class="hidden sm:inline">Agenda</span>
+                    </button>
+                    <button
+                        class="w-10 h-10 rounded-full bg-[#1a1a1a] text-gray-400 flex items-center justify-center hover:text-white relative">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-neon-pink rounded-full animate-pulse"></span>
+                    </button>
+                    <button onclick="app.openCalendly()"
+                        class="hidden md:flex items-center gap-2 bg-[#d4af37] text-black font-bold px-6 py-2.5 rounded-full hover:bg-[#c4a030] shadow-[0_0_20px_rgba(212,175,55,0.2)] active:scale-95 transition-all">
+                        <i data-lucide="phone-call" class="w-4 h-4"></i> Marcar Call
+                    </button>
+                </div>
+            </header>
+
+            <!-- SCROLL AREA -->
+            <div class="flex-1 overflow-y-auto px-10 pb-10 space-y-8">
+
+                <!-- KPIS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- KPI 1 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#39ff14]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-neon-green-10 rounded-full flex items-center justify-center text-neon-green">
+                            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Faturamento Estimado</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4" id="kpi-total">R$ 0,00</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-neon-green">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> <span id="kpi-trend">+0%</span> <span
+                                class="text-gray-500 font-normal ml-1">vs mês passado</span>
+                        </div>
+                    </div>
+                    <!-- KPI 2 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#ff00aa]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-neon-pink-10 rounded-full flex items-center justify-center text-neon-pink">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Novas Oportunidades</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4" id="kpi-count">0</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-neon-pink">
+                            <span id="kpi-urgent">0 urgentes</span> <span class="text-gray-500 font-normal ml-1">precisam de atenção</span>
+                        </div>
+                    </div>
+                    <!-- KPI 3 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#d4af37]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-gold-10 rounded-full flex items-center justify-center text-gold">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Taxa de Resposta</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4">92%</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-gold">
+                            Tempo recorde <span class="text-gray-500 font-normal ml-1">12min médio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABELA -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h2 class="text-xl font-syne font-bold text-white flex items-center gap-2">
+                            Leads Recentes <span id="leads-count-badge"
+                                class="text-sm font-inter font-normal text-gray-400 bg-[#1a1a1a] px-2 py-0.5 rounded-full">0</span>
+                        </h2>
+                        <button onclick="app.setFilter('all')"
+                            class="text-xs font-bold text-gray-400 hover:text-white px-3 py-1.5 rounded-full hover:bg-[#1a1a1a] transition-colors">Ver
+                            todos</button>
+                    </div>
+
+                    <div class="bg-[#141414] rounded-[2rem] overflow-hidden border border-white/5">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-white/5 text-gray-500 text-xs uppercase tracking-wider">
+                                    <th class="p-6 font-medium pl-8">Lead / Cliente</th>
+                                    <th class="p-6 font-medium">Canal</th>
+                                    <th class="p-6 font-medium">Status</th>
+                                    <th class="p-6 font-medium">Valor</th>
+                                    <th class="p-6 font-medium text-right pr-8">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body" class="text-sm">
+                                <!-- JS vai preencher aqui. Grug espera. -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DRAWER (MODAL LATERAL) -->
+            <div id="drawer-backdrop" onclick="app.closeDrawer()"
+                class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] hidden transition-opacity"></div>
+
+            <div id="drawer"
+                class="fixed inset-y-0 right-0 w-full md:w-[500px] bg-[#141414] shadow-2xl z-[100] border-l border-white/5 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+                <!-- Conteúdo do Drawer preenchido via JS -->
+                <div id="drawer-content" class="h-full flex flex-col"></div>
+            </div>
+
+        </main>
     </div>
-    
-    <div class="filters">
-        <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Todos</button>
-        <button class="filter-btn" data-filter="hoje" onclick="setFilter('hoje')">Hoje</button>
-        <button class="filter-btn" data-filter="quentes" onclick="setFilter('quentes')">Quentes</button>
-        <button class="filter-btn" data-filter="novos" onclick="setFilter('novos')">Novos</button>
-    </div>
-    
-    <div class="stats" id="stats"></div>
-    
-    <table class="leads-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Contato</th>
-                <th>Mensagem</th>
-                <th>Orçamento</th>
-                <th>Status</th>
-                <th>Data</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody id="leadsTable"></tbody>
-    </table>
-    
-    <div class="empty" id="empty" style="display: none;">Nenhum lead encontrado.</div>
-    
-    <div id="toast" class="toast"></div>
-    
+
+    <!-- GRUG JS: CÓDIGO SIMPLES -->
     <script>
-        let allLeads = [];
-        let currentFilter = 'all';
-        
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type} show`;
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        function getTemperature(timestamp) {
-            const diffHours = (Date.now() - new Date(timestamp).getTime()) / (1000 * 60 * 60);
-            if (diffHours < 2) return { label: 'FERVENDO', class: 'temp-hot' };
-            if (diffHours < 24) return { label: 'MORNO', class: 'temp-warm' };
-            return { label: 'FRIO', class: 'temp-cold' };
-        }
-        
-        function formatCurrency(val) {
-            if (!val || val === '-') return '-';
-            if (typeof val === 'number') {
-                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-            }
-            // Se for string, tentar parse simples
-            const num = parseFloat(String(val).replace(/[^0-9,]/g, '').replace(',', '.'));
-            if (isNaN(num)) return val;
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
-        }
-        
-        function calculatePipelineValue(leads) {
-            // Cálculo simples: contar leads com orçamento definido
-            // Grug-approved: simples, direto, sem parsing complexo
-            const withBudget = leads.filter(l => l.budget && l.budget !== '-').length;
-            // Estimativa conservadora: média de 20k por lead com orçamento
-            return withBudget * 20000;
-        }
-        
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.filter === filter);
-            });
-            renderLeads();
-        }
-        
-        function filterLeads(leads) {
-            const now = Date.now();
-            switch(currentFilter) {
-                case 'hoje':
-                    return leads.filter(l => {
-                        const leadTime = new Date(l.created_at).getTime();
-                        return (now - leadTime) < (1000 * 60 * 60 * 24);
-                    });
-                case 'quentes':
-                    return leads.filter(l => {
-                        const leadTime = new Date(l.created_at).getTime();
-                        return (now - leadTime) < (1000 * 60 * 60 * 2);
-                    });
-                case 'novos':
-                    return leads.filter(l => {
-                        const leadTime = new Date(l.created_at).getTime();
-                        return (now - leadTime) < (1000 * 60 * 60 * 24 * 7);
-                    });
-                default:
-                    return leads;
-            }
-        }
-        
-        function renderLeads() {
-            const filtered = filterLeads(allLeads);
-            const tbody = document.getElementById('leadsTable');
-            
-            if (filtered.length === 0) {
-                document.getElementById('empty').style.display = 'block';
-                tbody.innerHTML = '';
-            } else {
-                document.getElementById('empty').style.display = 'none';
-                tbody.innerHTML = filtered.map(lead => {
-                    const temp = getTemperature(lead.created_at);
-                    const contact = lead.email || lead.contact || '-';
-                    // Extrair telefone de forma mais robusta (10-15 dígitos)
-                    const phoneMatch = String(contact).match(/(\d{10,15})/);
-                    const phone = phoneMatch ? phoneMatch[1] : '';
-                    const safeName = escapeHtml(lead.name);
-                    return `
-                        <tr>
-                            <td>${lead.id}</td>
-                            <td><strong>${safeName}</strong></td>
-                            <td>${escapeHtml(contact)}</td>
-                            <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(lead.message || '-')}</td>
-                            <td>${escapeHtml(lead.budget || '-')}</td>
-                            <td><span class="temperature ${temp.class}">${temp.label}</span></td>
-                            <td>${formatDate(lead.created_at)}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    ${phone ? `<button class="btn btn-whatsapp" onclick="openWhatsApp('${phone}', '${safeName}')" title="WhatsApp">💬</button>` : ''}
-                                    <button class="btn btn-danger" onclick="deleteLead(${lead.id})">Deletar</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            }
-        }
-        
-        async function loadLeads() {
-            const res = await fetch('/api/leads');
-            if (!res.ok) {
-                if (res.status === 401) {
-                    window.location.reload();
+        // --- GRUG STATE ---
+        const state = {
+            leads: [],
+            filter: 'hoje',
+            activeLead: null
+        };
+
+        // --- GRUG APP LOGIC ---
+        const app = {
+            init: () => {
+                // Configurar Data
+                document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+
+                // Atalhos de Teclado
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') app.closeDrawer();
+                    if (e.key.toLowerCase() === 'w' && state.activeLead) app.openWhatsApp(state.activeLead);
+                });
+
+                lucide.createIcons();
+                app.loadLeads();
+                setInterval(app.loadLeads, 30000); // Atualizar a cada 30s
+            },
+
+            injectCalendly: () => {
+                if (document.querySelector('script[src*="calendly"]')) return;
+                const head = document.querySelector('head');
+                const script = document.createElement('script');
+                script.src = 'https://assets.calendly.com/assets/external/widget.js';
+                head.appendChild(script);
+                const css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://assets.calendly.com/assets/external/widget.css';
+                head.appendChild(css);
+            },
+
+            formatCurrency: (val) => {
+                if (!val || val === '-') return '-';
+                if (typeof val === 'number') {
+                    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+                }
+                const num = parseFloat(String(val).replace(/[^0-9,]/g, '').replace(',', '.'));
+                if (isNaN(num)) return val;
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
+            },
+
+            getTemperature: (ts) => {
+                const diff = (Date.now() - new Date(ts).getTime()) / 3600000; // horas
+                if (diff < 2) return { label: "FERVENDO", classes: "text-neon-pink bg-neon-pink-10" };
+                if (diff < 24) return { label: "MORNO", classes: "text-gold bg-gold-10" };
+                return { label: "FRIO", classes: "text-neon-green bg-neon-green-10" };
+            },
+
+            setFilter: (f) => {
+                state.filter = f;
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    const isActive = btn.dataset.filter === f;
+                    btn.classList.toggle('text-[#d4af37]', isActive);
+                    btn.classList.toggle('bg-[#1a1a1a]', isActive);
+                    btn.classList.toggle('shadow-[0_0_20px_rgba(212,175,55,0.1)]', isActive);
+                    if (!isActive) {
+                        btn.classList.add('text-gray-400');
+                        btn.classList.remove('bg-[#1a1a1a]');
+                    }
+                });
+                app.render();
+            },
+
+            openWhatsApp: (lead) => {
+                const phoneMatch = String(lead.contact || lead.email || '').match(/([0-9]{10,15})/);
+                const phone = phoneMatch ? phoneMatch[1] : '';
+                if (!phone) {
+                    app.showToast('Telefone não encontrado', 'error');
                     return;
                 }
-                showToast('Erro ao carregar leads', 'error');
-                return;
-            }
-            const data = await res.json();
-            allLeads = data.leads || [];
-            
-            const filtered = filterLeads(allLeads);
-            const pipelineValue = calculatePipelineValue(allLeads);
-            const hojeCount = allLeads.filter(l => {
-                const leadTime = new Date(l.created_at).getTime();
-                return (Date.now() - leadTime) < (1000 * 60 * 60 * 24);
-            }).length;
-            const quentesCount = allLeads.filter(l => {
-                const leadTime = new Date(l.created_at).getTime();
-                return (Date.now() - leadTime) < (1000 * 60 * 60 * 2);
-            }).length;
-            
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${allLeads.length}</div>
-                    <div class="stat-label">Total de Leads</div>
-                    <div class="stat-sub">${filtered.length} ${currentFilter !== 'all' ? 'filtrados' : ''}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: var(--accent-pink);">${quentesCount}</div>
-                    <div class="stat-label">Leads Quentes</div>
-                    <div class="stat-sub">Últimas 2 horas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: var(--accent-green);">${formatCurrency(pipelineValue)}</div>
-                    <div class="stat-label">Pipeline Estimado</div>
-                    <div class="stat-sub">${hojeCount} novos hoje</div>
-                </div>
-            `;
-            
-            renderLeads();
-        }
-        
-        function exportCSV() {
-            if (allLeads.length === 0) {
-                showToast('Nenhum lead para exportar', 'error');
-                return;
-            }
-            
-            // Escapar valores CSV corretamente (Grug-approved: simples e direto)
-            function escapeCSV(val) {
-                if (!val) return '';
-                const str = String(val);
-                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-                    return '"' + str.replace(/"/g, '""') + '"';
-                }
-                return str;
-            }
-            
-            const headers = ['ID', 'Nome', 'Email', 'Contato', 'Mensagem', 'Orçamento', 'Tipo', 'Data'];
-            const rows = allLeads.map(l => [
-                l.id,
-                escapeCSV(l.name),
-                escapeCSV(l.email || ''),
-                escapeCSV(l.contact || ''),
-                escapeCSV(l.message || ''),
-                escapeCSV(l.budget || ''),
-                escapeCSV(l.form_type || ''),
-                new Date(l.created_at).toLocaleDateString('pt-BR')
-            ]);
-            
-            const csvContent = [headers.map(escapeCSV), ...rows].map(row => row.join(',')).join('\n');
-            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `leads-gui-${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            showToast('CSV exportado com sucesso!', 'success');
-        }
-        
-        function openCalendly(lead = null) {
-            if (typeof Calendly !== 'undefined') {
-                Calendly.initPopupWidget({
-                    url: 'https://calendly.com/gui-magellane/reuniao-de-briefing',
-                    prefill: lead ? {
-                        name: lead.name || '',
-                        email: lead.email || ''
-                    } : {}
-                });
-            } else {
-                showToast('Calendly carregando... Tente novamente em 2 segundos.', 'error');
-                // Retry após 2 segundos
+                const msg = `Oi ${lead.name.split(' ')[0]}, tudo certo? Sobre o job que você pediu no site...`;
+                window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+            },
+
+            openCalendly: (lead) => {
+                app.injectCalendly();
                 setTimeout(() => {
-                    if (typeof Calendly !== 'undefined') {
-                        openCalendly(lead);
+                    if (window.Calendly) {
+                        window.Calendly.initPopupWidget({
+                            url: 'https://calendly.com/gui-magellane/reuniao-de-briefing',
+                            prefill: lead ? {
+                                name: lead.name || '',
+                                email: lead.email || ''
+                            } : {}
+                        });
+                    } else {
+                        app.showToast('Calendly carregando... Tente novamente em 2 segundos.', 'error');
                     }
-                }, 2000);
+                }, 500);
+            },
+
+            exportCSV: () => {
+                if (state.leads.length === 0) {
+                    app.showToast('Nenhum lead para exportar', 'error');
+                    return;
+                }
+                
+                function escapeCSV(val) {
+                    if (!val) return '';
+                    const str = String(val);
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                        return '"' + str.replace(/"/g, '""') + '"';
+                    }
+                    return str;
+                }
+                
+                const headers = ['ID', 'Nome', 'Email', 'Contato', 'Mensagem', 'Orçamento', 'Tipo', 'Data'];
+                const rows = state.leads.map(l => [
+                    l.id,
+                    escapeCSV(l.name),
+                    escapeCSV(l.email || ''),
+                    escapeCSV(l.contact || ''),
+                    escapeCSV(l.message || ''),
+                    escapeCSV(l.budget || ''),
+                    escapeCSV(l.form_type || ''),
+                    new Date(l.created_at).toLocaleDateString('pt-BR')
+                ]);
+                
+                const csvContent = [headers.map(escapeCSV), ...rows].map(row => row.join(',')).join('\n');
+                const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `leads-gui-${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                app.showToast('CSV exportado com sucesso!', 'success');
+            },
+
+            showToast: (msg, type) => {
+                const container = document.getElementById('toast-container');
+                const el = document.createElement('div');
+                el.className = `flex items-center gap-4 px-6 py-4 rounded-xl bg-[#141414] border shadow-2xl mb-2 animate-bounce ${type === 'error' || type === 'alert' ? 'border-[#ff00aa]/30' : 'border-[#39ff14]/30'}`;
+                el.innerHTML = `
+                    <div class="p-2 rounded-full ${type === 'error' || type === 'alert' ? 'bg-neon-pink-10 text-neon-pink' : 'bg-neon-green-10 text-neon-green'}">
+                        <i data-lucide="${type === 'error' || type === 'alert' ? 'zap' : 'check'}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white text-sm">${type === 'error' || type === 'alert' ? 'Atenção!' : 'Sucesso'}</p>
+                        <p class="text-gray-400 text-xs">${msg}</p>
+                    </div>
+                `;
+                container.appendChild(el);
+                lucide.createIcons();
+                setTimeout(() => el.remove(), 4000);
+            },
+
+            openDrawer: (lead) => {
+                state.activeLead = lead;
+                const drawer = document.getElementById('drawer');
+                const backdrop = document.getElementById('drawer-backdrop');
+                const content = document.getElementById('drawer-content');
+
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+
+                const phoneMatch = String(lead.contact || lead.email || '').match(/([0-9]{10,15})/);
+                const phone = phoneMatch ? phoneMatch[1] : '';
+                const value = lead.budget ? app.formatCurrency(lead.budget) : 'A definir';
+                const notes = lead.message || 'Sem observações.';
+
+                content.innerHTML = `
+                    <div class="p-8 flex items-center justify-between border-b border-white/5">
+                       <h2 class="text-2xl font-syne font-bold text-white">${app.escapeHtml(lead.name)}</h2>
+                       <button onclick="app.closeDrawer()" class="p-2 hover:bg-white/5 rounded-full text-gray-400">
+                         <i data-lucide="x" class="w-6 h-6"></i>
+                       </button>
+                    </div>
+                    <div class="p-8 flex-1 overflow-y-auto space-y-8">
+                       <div class="p-8 rounded-3xl bg-[#0f0f0f] border border-white/5 text-center relative overflow-hidden">
+                          <div class="absolute top-0 right-0 w-32 h-32 bg-gold-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                          <p class="text-gray-500 text-xs uppercase tracking-widest mb-2">Valor do Projeto</p>
+                          <h3 class="text-5xl font-syne font-bold text-[#d4af37] mb-6">${value}</h3>
+                          <div class="grid grid-cols-1 gap-3">
+                            ${phone ? `<button onclick='app.openWhatsApp(${JSON.stringify(lead)})' class="w-full py-4 bg-[#25D366] text-black font-bold rounded-xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-lg shadow-green-900/20">
+                               <i data-lucide="message-circle" class="w-5 h-5"></i> Conversar no WhatsApp
+                            </button>` : ''}
+                            <button onclick='app.openCalendly(${JSON.stringify(lead)})' class="w-full py-4 bg-[#1a1a1a] text-white border border-white/10 font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-[#252525] transition-colors">
+                               <i data-lucide="calendar-days" class="w-5 h-5"></i> Marcar Reunião Agora
+                            </button>
+                          </div>
+                       </div>
+                       <div>
+                          <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider text-gray-500">Briefing Inicial</h4>
+                          <p class="text-gray-300 text-lg leading-relaxed font-light italic bg-[#0f0f0f] p-6 rounded-2xl border border-white/5">"${app.escapeHtml(notes)}"</p>
+                       </div>
+                    </div>
+                `;
+                lucide.createIcons();
+            },
+
+            closeDrawer: () => {
+                state.activeLead = null;
+                document.getElementById('drawer').classList.add('translate-x-full');
+                document.getElementById('drawer-backdrop').classList.add('hidden');
+            },
+
+            escapeHtml: (text) => {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            loadLeads: async () => {
+                try {
+                    const res = await fetch('/api/leads');
+                    if (!res.ok) {
+                        if (res.status === 401) {
+                            window.location.reload();
+                            return;
+                        }
+                        app.showToast('Erro ao carregar leads', 'error');
+                        return;
+                    }
+                    const data = await res.json();
+                    state.leads = (data.leads || []).map(lead => ({
+                        ...lead,
+                        timestamp: new Date(lead.created_at).getTime(),
+                        source: lead.form_type === 'modal' ? 'form' : (lead.form_type || 'form'),
+                        phone: lead.contact || lead.email || '',
+                        value: lead.budget ? parseFloat(String(lead.budget).replace(/[^0-9,]/g, '').replace(',', '.')) || 0 : 0,
+                        notes: lead.message || '',
+                        contacted: false
+                    }));
+                    app.render();
+                } catch (error) {
+                    console.error('Erro ao carregar leads:', error);
+                    app.showToast('Erro ao carregar leads', 'error');
+                }
+            },
+
+            render: () => {
+                // Filtra Leads
+                const filtered = state.leads.filter(l => {
+                    const diff = Date.now() - l.timestamp;
+                    if (state.filter === 'hoje') return diff < 86400000;
+                    if (state.filter === 'quentes') return diff < 7200000; // 2h
+                    if (state.filter === 'whatsapp') {
+                        const phoneMatch = String(l.contact || l.email || '').match(/([0-9]{10,15})/);
+                        return phoneMatch !== null;
+                    }
+                    return true;
+                });
+
+                // Atualiza KPIs
+                const totalValue = state.leads.reduce((acc, l) => acc + (l.value || 0), 0);
+                const quentesCount = state.leads.filter(l => {
+                    const diff = Date.now() - l.timestamp;
+                    return diff < 7200000; // 2h
+                }).length;
+                
+                document.getElementById('kpi-total').innerText = app.formatCurrency(totalValue);
+                document.getElementById('kpi-count').innerText = state.leads.length;
+                document.getElementById('kpi-urgent').innerText = `${quentesCount} urgentes`;
+                document.getElementById('leads-count-badge').innerText = filtered.length;
+
+                // Renderiza Tabela (O jeito Grug: innerHTML limpo)
+                const tbody = document.getElementById('leads-table-body');
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">Nenhum lead encontrado.</td></tr>';
+                } else {
+                    tbody.innerHTML = filtered.map(lead => {
+                        const temp = app.getTemperature(lead.created_at);
+                        const phoneMatch = String(lead.contact || lead.email || '').match(/([0-9]{10,15})/);
+                        const hasPhone = phoneMatch !== null;
+                        return `
+                            <tr class="group cursor-pointer hover:bg-white/[0.02] transition-colors border-b border-white/5 last:border-0" onclick='app.openDrawer(${JSON.stringify(lead)})'>
+                                <td class="p-6 pl-8">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs relative bg-neon-pink-10 text-neon-pink">
+                                            ${app.escapeHtml(lead.name).charAt(0).toUpperCase()}
+                                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-pink border-2 border-[#141414] rounded-full"></span>
+                                        </div>
+                                        <div>
+                                            <p class="text-white font-medium group-hover:text-[#d4af37] transition-colors">${app.escapeHtml(lead.name)}</p>
+                                            <p class="text-xs text-gray-500">ID #${lead.id}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="p-6">
+                                    <div class="flex items-center gap-2 text-gray-400">
+                                        <i data-lucide="${lead.form_type === 'modal' ? 'layout-dashboard' : 'message-circle'}" class="w-4 h-4"></i>
+                                        <span class="capitalize">${lead.form_type || 'form'}</span>
+                                    </div>
+                                </td>
+                                <td class="p-6">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold ${temp.classes}">${temp.label}</span>
+                                </td>
+                                <td class="p-6 font-mono text-gray-300">${lead.budget ? app.formatCurrency(lead.budget) : '-'}</td>
+                                <td class="p-6 text-right pr-8">
+                                    ${hasPhone ? `<button onclick='event.stopPropagation(); app.openWhatsApp(${JSON.stringify(lead)})' class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-green hover:border-neon-green hover:bg-neon-green-10 transition-all ml-auto">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    </button>` : '<span class="text-gray-500 text-xs">-</span>'}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                // Re-inicializa ícones novos
+                lucide.createIcons();
             }
-        }
-        
-        function openWhatsApp(phone, name) {
-            const cleanPhone = phone.replace(/[^0-9]/g, '');
-            const message = `Oi ${name.split(' ')[0]}, tudo certo? Sobre o job que você pediu no site...`;
-            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
-        }
-        
-        async function deleteLead(id) {
-            if (!confirm('Tem certeza que deseja deletar este lead?')) return;
-            
-            const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
-            if (res.ok) {
-                showToast('Lead deletado com sucesso', 'success');
-                loadLeads();
-            } else {
-                showToast('Erro ao deletar lead', 'error');
-            }
-        }
-        
-        async function logout() {
-            await fetch('/api/logout', { method: 'POST' });
-            window.location.reload();
-        }
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleString('pt-BR', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        loadLeads();
-        setInterval(loadLeads, 30000);
+        };
+
+        // Grug Inicializa
+        app.init();
     </script>
 </body>
-</html>'''
 
+</html>'''
 # Painel admin (HTML/CSS/JS vanilla - Grug-approved)
 @app.route('/admin')
 def admin():

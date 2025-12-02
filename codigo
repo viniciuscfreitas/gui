@@ -1,607 +1,546 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  MessageCircle, 
-  Search, 
-  TrendingUp, 
-  Instagram, 
-  Menu,
-  Zap,
-  DollarSign,
-  User,
-  Bell,
-  Plus,
-  LayoutDashboard,
-  CalendarDays,
-  X,
-  Lock,
-  Download,
-  PhoneCall,
-  Check,
-  ArrowRight
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-/* --- CONFIGURAÇÃO FINAL 10/10 ---
-   Visual: "Seamless Shell" (Neobrutalism Clean)
-   Funcionalidades: 
-     - Auth: Senha simples 'gui2025'
-     - Calendly: Popup Widget Real
-     - CSV: Export nativo
-     - Notificações: Som + Title + Toast
-     - A11y: WCAG 2.2 Compliant
-*/
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin • Gui</title>
 
-// --- ASSETS ---
-// Som de notificação sutil (Base64 short beep)
-const NOTIFICATION_SOUND = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"; // Placeholder curto para exemplo, na real usaria um arquivo mp3 melhor.
-// Simulando um som real de "Glass Ping" via AudioContext seria melhor, mas base64 resolve para demo.
+    <!-- Grug usa Tailwind CDN. Rápido. Fácil. -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-const MOCK_LEADS = [
-  { id: 1, name: "Beatriz S.", source: "instagram", status: "new", phone: "5511999999999", value: 15000, timestamp: Date.now() - 1000 * 60 * 30, notes: "Quer rebranding completo p/ marca de joias.", contacted: false }, 
-  { id: 2, name: "Agência VML", source: "whatsapp", status: "negotiation", phone: "5511988888888", value: 45000, timestamp: Date.now() - 1000 * 60 * 60 * 5, notes: "Projeto 3D para campanha de natal. Urgente.", contacted: true },
-  { id: 3, name: "Ricardo T.", source: "form", status: "new", phone: "5511977777777", value: 8500, timestamp: Date.now() - 1000 * 60 * 60 * 25, notes: "Landing page para lançamento de infoproduto.", contacted: false },
-  { id: 4, name: "StartUp X", source: "instagram", status: "closed", phone: "5511966666666", value: 22000, timestamp: Date.now() - 1000 * 60 * 60 * 48, notes: "Contrato assinado. Aguardando briefing.", contacted: true },
-  { id: 5, name: "Fernanda L.", source: "form", status: "new", phone: "5511955555555", value: 12000, timestamp: Date.now() - 1000 * 60 * 10, notes: "Identidade visual para clínica de estética.", contacted: false },
-];
+    <!-- Grug usa Lucide Icons. Bonitos. -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-// --- LOGIN COMPONENT ---
-const LoginScreen = ({ onLogin }) => {
-  const [pass, setPass] = useState("");
-  const [error, setError] = useState(false);
+    <!-- Fonte Syne e Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (pass === "gui2025") {
-      onLogin();
-    } else {
-      setError(true);
-      setPass("");
-    }
-  };
+    <style>
+        /* Grug Configurações Visuais */
+        body {
+            background-color: #0f0f0f;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            /* App feel */
+        }
 
-  return (
-    <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center p-4 font-sans">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-[#d4af37] mx-auto rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
-            <Lock size={32} className="text-black" />
-          </div>
-          <h1 className="text-3xl font-syne font-bold text-white mb-2">Acesso Restrito</h1>
-          <p className="text-gray-500 font-inter">Pipeline Gui Magellane • 2025</p>
+        .font-syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Scrollbar invisível. Grug gosta limpo. */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        /* Foco acessível mas bonito */
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid #d4af37;
+            outline-offset: 2px;
+        }
+
+        /* Utilitários de Animação */
+        .slide-in {
+            transform: translateX(0%);
+        }
+
+        .slide-out {
+            transform: translateX(100%);
+        }
+
+        /* Cores Neon Grug */
+        .text-neon-pink {
+            color: #ff00aa;
+        }
+
+        .bg-neon-pink-10 {
+            background-color: rgba(255, 0, 170, 0.1);
+        }
+
+        .text-neon-green {
+            color: #39ff14;
+        }
+
+        .bg-neon-green-10 {
+            background-color: rgba(57, 255, 20, 0.1);
+        }
+
+        .text-gold {
+            color: #d4af37;
+        }
+
+        .bg-gold-10 {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+    </style>
+</head>
+
+<body class="selection:bg-[#d4af37] selection:text-black">
+
+    <!-- SOM DE NOTIFICAÇÃO (Base64 para não depender de arquivo) -->
+    <audio id="notif-sound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"></audio>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 left-24 z-[100]"></div>
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md text-center">
+            <div
+                class="w-16 h-16 bg-[#d4af37] mx-auto rounded-2xl flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                <i data-lucide="lock" class="text-black w-8 h-8"></i>
+            </div>
+            <h1 class="text-3xl font-syne font-bold text-white mb-2">Acesso Restrito</h1>
+            <p class="text-gray-500 mb-10">Pipeline Gui Magellane • 2025</p>
+
+            <form id="login-form" class="relative">
+                <input type="password" id="password-input" placeholder="Senha de acesso"
+                    class="w-full bg-[#141414] border border-white/10 rounded-xl px-5 py-4 text-white placeholder-gray-600 focus:border-[#d4af37] transition-all">
+                <button type="submit"
+                    class="absolute right-2 top-2 bottom-2 bg-[#d4af37] text-black rounded-lg px-4 hover:bg-[#c4a030] transition-colors">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </form>
+            <p id="login-error" class="text-red-500 text-sm mt-4 hidden animate-pulse">Senha errada. Grug não deixa
+                passar.</p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
-             <input 
-               type="password" 
-               value={pass}
-               onChange={(e) => { setPass(e.target.value); setError(false); }}
-               placeholder="Senha de acesso"
-               className={`w-full bg-[#141414] border ${error ? 'border-red-500' : 'border-white/10'} rounded-xl px-5 py-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] transition-all`}
-               autoFocus
-             />
-             <button 
-                type="submit"
-                className="absolute right-2 top-2 bottom-2 bg-[#d4af37] text-black rounded-lg px-4 font-bold hover:bg-[#c4a030] transition-colors"
-             >
-               <ArrowRight size={20} />
-             </button>
-          </div>
-          {error && <p className="text-red-500 text-sm text-center animate-pulse">Senha incorreta. Tente novamente.</p>}
-        </form>
-      </div>
     </div>
-  );
-};
 
-// --- MAIN DASHBOARD ---
-const AdminDashboard = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [leads, setLeads] = useState(MOCK_LEADS);
-  const [filter, setFilter] = useState("hoje"); 
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [activeLead, setActiveLead] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [toast, setToast] = useState(null); // { message, type }
-  
-  const drawerRef = useRef(null);
-  const audioRef = useRef(null);
+    <!-- DASHBOARD (Escondido inicialmente) -->
+    <div id="dashboard" class="hidden flex h-screen">
 
-  // --- CALENDLY INJECTION ---
-  useEffect(() => {
-    if (isAuthenticated) {
-      const head = document.querySelector('head');
-      const script = document.createElement('script');
-      script.setAttribute('src', 'https://assets.calendly.com/assets/external/widget.js');
-      head.appendChild(script);
-      
-      const style = document.createElement('link');
-      style.setAttribute('rel', 'stylesheet');
-      style.setAttribute('href', 'https://assets.calendly.com/assets/external/widget.css');
-      head.appendChild(style);
-    }
-  }, [isAuthenticated]);
-
-  // --- LOGIC ---
-  const getTemperature = (timestamp) => {
-    const diffHours = (Date.now() - timestamp) / (1000 * 60 * 60);
-    if (diffHours < 2) return { label: "FERVENDO", color: "text-[#ff00aa]", bg: "bg-[#ff00aa]/10" };
-    if (diffHours < 24) return { label: "MORNO", color: "text-[#d4af37]", bg: "bg-[#d4af37]/10" };
-    return { label: "FRIO", color: "text-[#00f7ff]", bg: "bg-[#00f7ff]/10" };
-  };
-
-  const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-  const getPipelineValue = () => leads.reduce((acc, lead) => acc + lead.value, 0);
-
-  // --- ACTIONS ---
-  const openWhatsApp = (lead) => {
-    if (!lead) return;
-    const message = `Oi ${lead.name.split(' ')[0]}, tudo certo? Sobre o job que você pediu no site...`;
-    window.open(`https://wa.me/${lead.phone}?text=${encodeURIComponent(message)}`, '_blank');
-    setLeads(leads.map(l => l.id === lead.id ? { ...l, contacted: true } : l));
-  };
-
-  const openCalendly = (lead = null) => {
-    // @ts-ignore
-    if (window.Calendly) {
-      // @ts-ignore
-      window.Calendly.initPopupWidget({
-        url: 'https://calendly.com/gui-magellane/reuniao-de-briefing', // URL Placeholder
-        prefill: lead ? {
-          name: lead.name,
-          email: `${lead.name.split(' ')[0].toLowerCase()}@cliente.com`, // Mock email logic
-          customAnswers: {
-            a1: lead.phone
-          }
-        } : {}
-      });
-    } else {
-      alert("Calendly carregando... Tente novamente em 2 segundos.");
-    }
-  };
-
-  const exportCSV = () => {
-    const headers = ["ID,Nome,Origem,Status,Valor,Telefone,Data"];
-    const rows = leads.map(l => 
-      `${l.id},${l.name},${l.source},${l.contacted ? 'Contatado' : 'Novo'},${l.value},${l.phone},${new Date(l.timestamp).toLocaleDateString()}`
-    );
-    const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `leads-gui-dezembro-2025.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    setToast({ message: "Relatório Mensal baixado com sucesso!", type: "success" });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  // --- SIMULATION (NEW LEAD) ---
-  const simulateNewLead = () => {
-    const names = ["Agência África", "Nubank Creative", "Itaú Branding", "Nike SP", "Studio Z"];
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    const randomValue = Math.floor(Math.random() * 40000) + 5000;
-    
-    const newLead = {
-      id: Date.now(),
-      name: randomName,
-      source: Math.random() > 0.5 ? "instagram" : "form",
-      status: "new",
-      phone: "5511999999999",
-      value: randomValue,
-      timestamp: Date.now(),
-      notes: "Novo lead simulado chegando agora via webhook.",
-      contacted: false
-    };
-
-    setLeads([newLead, ...leads]);
-    
-    // Notification FX
-    if (audioRef.current) {
-        audioRef.current.play().catch(e => console.log("Audio play blocked", e));
-    }
-    setToast({ message: `Novo lead quente: ${formatCurrency(randomValue)} — ${randomName}`, type: "alert" });
-    setTimeout(() => setToast(null), 5000);
-    
-    // Update Title
-    document.title = `(●) Leads • Gui`;
-    setTimeout(() => document.title = "Admin • Gui", 5000);
-  };
-
-  // --- FILTERING ---
-  const filteredLeads = useMemo(() => {
-    return leads.filter(lead => {
-      if (filter === 'hoje') return (Date.now() - lead.timestamp) < (1000 * 60 * 60 * 24);
-      if (filter === 'quentes') return (Date.now() - lead.timestamp) < (1000 * 60 * 60 * 2);
-      if (filter === 'whatsapp') return lead.source === 'whatsapp';
-      return true;
-    });
-  }, [leads, filter]);
-
-  // --- KEYBOARD HANDLERS ---
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        if (drawerOpen) setDrawerOpen(false);
-        if (mobileMenuOpen) setMobileMenuOpen(false);
-      }
-      if (e.key.toLowerCase() === 'w' && drawerOpen && activeLead) {
-        openWhatsApp(activeLead);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [drawerOpen, mobileMenuOpen, activeLead]);
-
-  useEffect(() => {
-    if (drawerOpen && drawerRef.current) {
-        drawerRef.current.focus();
-    }
-  }, [drawerOpen]);
-
-  // --- RENDER ---
-  if (!isAuthenticated) {
-    return <LoginScreen onLogin={() => setIsAuthenticated(true)} />;
-  }
-
-  return (
-    <div className="flex min-h-screen bg-[#0f0f0f] text-gray-100 font-sans selection:bg-[#d4af37] selection:text-black overflow-hidden relative">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap');
-        .font-syne { font-family: 'Syne', sans-serif; }
-        .font-inter { font-family: 'Inter', sans-serif; }
-        ::-webkit-scrollbar { width: 0px; background: transparent; }
-        button:focus-visible, a:focus-visible, input:focus-visible { outline: none; }
-      `}</style>
-      
-      {/* Audio Element */}
-      <audio ref={audioRef} src={NOTIFICATION_SOUND} />
-
-      {/* --- TOAST NOTIFICATION --- */}
-      {toast && (
-        <div className="fixed bottom-6 left-24 z-[100] animate-slide-up">
-           <div className={`
-             flex items-center gap-4 px-6 py-4 rounded-xl border border-white/10 shadow-2xl
-             ${toast.type === 'alert' ? 'bg-[#141414] border-[#ff00aa]/30' : 'bg-[#141414] border-[#39ff14]/30'}
-           `}>
-              <div className={`p-2 rounded-full ${toast.type === 'alert' ? 'bg-[#ff00aa]/10 text-[#ff00aa]' : 'bg-[#39ff14]/10 text-[#39ff14]'}`}>
-                {toast.type === 'alert' ? <Zap size={20} /> : <Check size={20} />}
-              </div>
-              <div>
-                <p className="font-bold text-white text-sm">{toast.type === 'alert' ? 'Nova Oportunidade!' : 'Sucesso'}</p>
-                <p className="text-gray-400 text-xs">{toast.message}</p>
-              </div>
-           </div>
-        </div>
-      )}
-
-      {/* --- SIDEBAR INTEGRADA (RAIL) --- */}
-      <aside 
-        className={`
-          fixed md:relative z-50 h-screen w-24 flex flex-col items-center py-6 gap-8
-          bg-[#0f0f0f] md:bg-transparent transition-transform duration-300
-          ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-        aria-label="Navegação Principal"
-      >
-        <div 
-          role="img" 
-          aria-label="Logo Leads Machine"
-          className="w-12 h-12 bg-[#d4af37] text-black rounded-xl flex items-center justify-center shadow-[4px_4px_0px_0px_#1a1a1a] mb-4 cursor-pointer hover:translate-x-0.5 hover:-translate-y-0.5 transition-all"
-        >
-          <Zap size={24} fill="currentColor" />
-        </div>
-
-        <nav className="flex-1 flex flex-col gap-4 w-full px-4">
-          {[
-            { id: 'hoje', icon: LayoutDashboard, label: 'Visão Geral' },
-            { id: 'quentes', icon: TrendingUp, label: 'Leads Quentes', activeColor: 'text-[#ff00aa]' },
-            { id: 'whatsapp', icon: MessageCircle, label: 'WhatsApp' },
-            { id: 'calendar', icon: CalendarDays, label: 'Agenda' },
-            { id: 'clientes', icon: User, label: 'Clientes' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setFilter(item.id === 'calendar' || item.id === 'clientes' ? filter : item.id)}
-              aria-label={item.label}
-              aria-pressed={filter === item.id}
-              className={`
-                w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group mx-auto
-                ${filter === item.id 
-                  ? 'bg-[#1a1a1a] text-[#d4af37] shadow-[0_0_20px_rgba(212,175,55,0.1)]' 
-                  : 'text-gray-400 hover:bg-[#1a1a1a] hover:text-white'}
-              `}
-            >
-              <item.icon size={22} className={filter === item.id && item.activeColor ? item.activeColor : ''} aria-hidden="true" />
-              <span className="absolute left-14 bg-white text-black text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50" aria-hidden="true">
-                {item.label}
-              </span>
-            </button>
-          ))}
-          
-          {/* SIMULATION BUTTON (Secret Tool for Demo) */}
-          <button 
-             onClick={simulateNewLead}
-             className="w-12 h-12 rounded-2xl flex items-center justify-center text-gray-600 hover:text-white hover:bg-[#1a1a1a] mt-8 transition-all"
-             title="Simular Novo Lead (Demo)"
-          >
-            <Plus size={20} />
-          </button>
-        </nav>
-
-        <div className="mt-auto mb-4">
-          <button className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#d4af37] to-[#ff00aa] p-[2px] hover:scale-110 transition-transform">
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Gui" alt="" className="rounded-full bg-black" aria-hidden="true" />
-          </button>
-        </div>
-      </aside>
-
-      {/* --- ÁREA PRINCIPAL --- */}
-      <main className="flex-1 flex flex-col relative h-screen overflow-hidden">
-        
-        {/* --- HEADER --- */}
-        <header className="px-6 py-8 md:px-10 flex flex-col md:flex-row items-start md:items-center justify-between shrink-0 gap-4">
-          <div>
-            <h1 className="text-3xl font-syne font-bold text-white flex items-center gap-3">
-              Olá, Gui! <span className="text-2xl animate-bounce" aria-hidden="true">👋</span>
-            </h1>
-            <p className="text-gray-400 font-inter text-sm mt-1">
-              Hoje, 01 de Dezembro • Pipeline atualizado
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-             <button 
-               onClick={exportCSV}
-               className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 text-sm font-medium hover:text-white hover:bg-[#252525] border border-transparent hover:border-white/10 transition-all"
-             >
-               <Download size={16} /> <span className="hidden sm:inline">Exportar Mês</span>
-             </button>
-
-             <button 
-               onClick={() => openCalendly()}
-               className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 text-sm font-medium hover:text-white hover:bg-[#252525] border border-transparent hover:border-white/10 transition-all"
-             >
-               <CalendarDays size={16} /> <span className="hidden sm:inline">Agenda</span>
-             </button>
-
-            <button 
-              aria-label="Notificações"
-              className="w-10 h-10 rounded-full bg-[#1a1a1a] text-gray-400 flex items-center justify-center hover:text-white hover:bg-[#252525] transition-colors relative"
-            >
-              <Bell size={20} aria-hidden="true" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-[#ff00aa] rounded-full animate-pulse" aria-hidden="true"></span>
-            </button>
-            
-            <button 
-              onClick={() => openCalendly()}
-              className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black font-bold px-6 py-2.5 rounded-full hover:bg-[#c4a030] transition-all shadow-[0_0_20px_rgba(212,175,55,0.2)] active:scale-95 outline-none"
-            >
-              <PhoneCall size={18} strokeWidth={2.5} aria-hidden="true" /> Marcar Call
-            </button>
-            
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-              className="md:hidden text-white p-2"
-            >
-              <Menu size={24} aria-hidden="true" />
-            </button>
-          </div>
-        </header>
-
-        {/* --- CONTEÚDO SCROLLÁVEL --- */}
-        <div className="flex-1 overflow-y-auto px-6 md:px-10 pb-10 space-y-8">
-          
-          {/* KPIS */}
-          <section aria-label="Indicadores de Performance" className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <article className="bg-[#141414] p-6 rounded-[2rem] relative group hover:-translate-y-1 transition-transform duration-300 border border-white/5 hover:border-[#39ff14]/20">
-               <div className="absolute top-4 right-4 w-10 h-10 bg-[#39ff14]/10 rounded-full flex items-center justify-center text-[#39ff14]">
-                 <DollarSign size={20} aria-hidden="true" />
-               </div>
-               <p className="text-gray-400 text-sm font-medium mb-2">Faturamento Estimado</p>
-               <h3 className="text-3xl font-syne font-bold text-white mb-4">
-                 {formatCurrency(getPipelineValue())}
-               </h3>
-               <div className="flex items-center gap-2 text-xs font-bold text-[#39ff14]">
-                 <TrendingUp size={14} aria-hidden="true" /> +15% <span className="text-gray-500 font-normal ml-1">vs mês passado</span>
-               </div>
-            </article>
-
-            <article className="bg-[#141414] p-6 rounded-[2rem] relative group hover:-translate-y-1 transition-transform duration-300 border border-white/5 hover:border-[#ff00aa]/20">
-               <div className="absolute top-4 right-4 w-10 h-10 bg-[#ff00aa]/10 rounded-full flex items-center justify-center text-[#ff00aa]">
-                 <Zap size={20} aria-hidden="true" />
-               </div>
-               <p className="text-gray-400 text-sm font-medium mb-2">Novas Oportunidades</p>
-               <h3 className="text-3xl font-syne font-bold text-white mb-4">{leads.filter(l => !l.contacted).length}</h3>
-               <div className="flex items-center gap-2 text-xs font-bold text-[#ff00aa]">
-                 5 urgentes <span className="text-gray-500 font-normal ml-1">precisam de atenção</span>
-               </div>
-            </article>
-
-             <article className="bg-[#141414] p-6 rounded-[2rem] relative group hover:-translate-y-1 transition-transform duration-300 border border-white/5 hover:border-[#d4af37]/20">
-               <div className="absolute top-4 right-4 w-10 h-10 bg-[#d4af37]/10 rounded-full flex items-center justify-center text-[#d4af37]">
-                 <MessageCircle size={20} aria-hidden="true" />
-               </div>
-               <p className="text-gray-400 text-sm font-medium mb-2">Taxa de Resposta</p>
-               <h3 className="text-3xl font-syne font-bold text-white mb-4">92%</h3>
-               <div className="flex items-center gap-2 text-xs font-bold text-[#d4af37]">
-                 Tempo recorde <span className="text-gray-500 font-normal ml-1">12min médio</span>
-               </div>
-            </article>
-          </section>
-
-          {/* TABLE */}
-          <section className="space-y-4" aria-label="Tabela de Leads Recentes">
-            <div className="flex items-center justify-between px-2">
-               <h2 className="text-xl font-syne font-bold text-white flex items-center gap-2">
-                 Leads Recentes <span className="text-sm font-inter font-normal text-gray-400 bg-[#1a1a1a] px-2 py-0.5 rounded-full">{filteredLeads.length}</span>
-               </h2>
-               <div className="flex gap-2">
-                 <button className="text-xs font-bold text-gray-400 hover:text-white px-3 py-1.5 rounded-full hover:bg-[#1a1a1a] transition-colors outline-none">Ver todos</button>
-               </div>
+        <!-- SIDEBAR RAIL -->
+        <aside class="w-24 bg-[#0f0f0f] flex flex-col items-center py-6 gap-8 z-50 border-r border-white/0">
+            <div
+                class="w-12 h-12 bg-[#d4af37] text-black rounded-xl flex items-center justify-center shadow-[4px_4px_0px_0px_#1a1a1a] cursor-pointer hover:-translate-y-0.5 transition-transform">
+                <i data-lucide="zap" class="w-6 h-6 fill-current"></i>
             </div>
 
-            <div className="bg-[#141414] rounded-[2rem] overflow-hidden border border-white/5">
-               <table className="w-full text-left">
-                 <thead>
-                   <tr className="border-b border-white/5 text-gray-500 text-xs uppercase tracking-wider">
-                     <th scope="col" className="p-6 font-medium pl-8">Lead / Cliente</th>
-                     <th scope="col" className="p-6 font-medium">Canal</th>
-                     <th scope="col" className="p-6 font-medium">Status</th>
-                     <th scope="col" className="p-6 font-medium">Valor</th>
-                     <th scope="col" className="p-6 font-medium text-right pr-8">Ação</th>
-                   </tr>
-                 </thead>
-                 <tbody className="text-sm font-inter">
-                   {filteredLeads.map((lead, idx) => {
-                      const temp = getTemperature(lead.timestamp);
-                      return (
-                        <tr 
-                          key={lead.id} 
-                          tabIndex={0}
-                          role="button"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setActiveLead(lead); 
-                              setDrawerOpen(true);
-                            }
-                          }}
-                          onClick={() => { setActiveLead(lead); setDrawerOpen(true); }}
-                          className={`
-                            group cursor-pointer hover:bg-white/[0.02] transition-colors border-b border-white/5 last:border-0
-                            ${idx === filteredLeads.length - 1 ? 'border-none' : ''}
-                            outline-none focus:bg-white/5
-                          `}
-                        >
-                          <td className="p-6 pl-8">
-                             <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs relative
-                                  ${lead.contacted ? 'bg-[#39ff14]/10 text-[#39ff14]' : 'bg-[#ff00aa]/10 text-[#ff00aa]'}
-                                `} aria-hidden="true">
-                                  {lead.name.charAt(0)}
-                                  {!lead.contacted && <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#ff00aa] border-2 border-[#141414] rounded-full"></span>}
+            <nav class="flex-1 flex flex-col gap-6 w-full px-2" id="nav-buttons">
+                <!-- Botões gerados via JS ou hardcoded, Grug gosta de hardcoded se pouco muda -->
+                <button onclick="app.setFilter('hoje')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-[#d4af37] bg-[#1a1a1a] shadow-[0_0_20px_rgba(212,175,55,0.1)] transition-all"
+                    data-filter="hoje" title="Visão Geral">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                </button>
+                <button onclick="app.setFilter('quentes')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-all"
+                    data-filter="quentes" title="Quentes">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-neon-pink"></i>
+                </button>
+                <button onclick="app.setFilter('whatsapp')"
+                    class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-gray-400 hover:text-white hover:bg-[#1a1a1a] transition-all"
+                    data-filter="whatsapp" title="WhatsApp">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Botão Secreto Demo -->
+                <button onclick="app.simulateLead()"
+                    class="mt-8 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto text-gray-600 hover:text-white hover:bg-[#1a1a1a] transition-all"
+                    title="Simular Lead">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                </button>
+            </nav>
+
+            <div class="mb-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#d4af37] to-[#ff00aa] p-[2px]">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Gui" class="rounded-full bg-black">
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col relative overflow-hidden">
+
+            <!-- HEADER -->
+            <header class="px-10 py-8 flex items-center justify-between shrink-0">
+                <div>
+                    <h1 class="text-3xl font-syne font-bold text-white flex items-center gap-3">
+                        Olá, Gui! <span class="text-2xl animate-bounce">👋</span>
+                    </h1>
+                    <p class="text-gray-400 text-sm mt-1">Hoje, <span id="current-date"></span> • Pipeline Atualizado
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="app.exportCSV()"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 hover:text-white hover:bg-[#252525] text-sm font-medium transition-all">
+                        <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar
+                            Mês</span>
+                    </button>
+                    <button onclick="app.openCalendly()"
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1a1a1a] text-gray-300 hover:text-white hover:bg-[#252525] text-sm font-medium transition-all">
+                        <i data-lucide="calendar-days" class="w-4 h-4"></i> <span class="hidden sm:inline">Agenda</span>
+                    </button>
+                    <button
+                        class="w-10 h-10 rounded-full bg-[#1a1a1a] text-gray-400 flex items-center justify-center hover:text-white relative">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-neon-pink rounded-full animate-pulse"></span>
+                    </button>
+                    <button onclick="app.openCalendly()"
+                        class="hidden md:flex items-center gap-2 bg-[#d4af37] text-black font-bold px-6 py-2.5 rounded-full hover:bg-[#c4a030] shadow-[0_0_20px_rgba(212,175,55,0.2)] active:scale-95 transition-all">
+                        <i data-lucide="phone-call" class="w-4 h-4"></i> Marcar Call
+                    </button>
+                </div>
+            </header>
+
+            <!-- SCROLL AREA -->
+            <div class="flex-1 overflow-y-auto px-10 pb-10 space-y-8">
+
+                <!-- KPIS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- KPI 1 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#39ff14]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-neon-green-10 rounded-full flex items-center justify-center text-neon-green">
+                            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Faturamento Estimado</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4" id="kpi-total">R$ 0,00</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-neon-green">
+                            <i data-lucide="trending-up" class="w-3 h-3"></i> +15% <span
+                                class="text-gray-500 font-normal ml-1">vs mês passado</span>
+                        </div>
+                    </div>
+                    <!-- KPI 2 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#ff00aa]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-neon-pink-10 rounded-full flex items-center justify-center text-neon-pink">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Novas Oportunidades</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4" id="kpi-count">0</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-neon-pink">
+                            5 urgentes <span class="text-gray-500 font-normal ml-1">precisam de atenção</span>
+                        </div>
+                    </div>
+                    <!-- KPI 3 -->
+                    <div
+                        class="bg-[#141414] p-6 rounded-[2rem] border border-white/5 hover:border-[#d4af37]/20 transition-all group relative">
+                        <div
+                            class="absolute top-4 right-4 w-10 h-10 bg-gold-10 rounded-full flex items-center justify-center text-gold">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        </div>
+                        <p class="text-gray-400 text-sm font-medium mb-2">Taxa de Resposta</p>
+                        <h3 class="text-3xl font-syne font-bold text-white mb-4">92%</h3>
+                        <div class="flex items-center gap-2 text-xs font-bold text-gold">
+                            Tempo recorde <span class="text-gray-500 font-normal ml-1">12min médio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABELA -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between px-2">
+                        <h2 class="text-xl font-syne font-bold text-white flex items-center gap-2">
+                            Leads Recentes <span id="leads-count-badge"
+                                class="text-sm font-inter font-normal text-gray-400 bg-[#1a1a1a] px-2 py-0.5 rounded-full">0</span>
+                        </h2>
+                        <button onclick="app.setFilter('all')"
+                            class="text-xs font-bold text-gray-400 hover:text-white px-3 py-1.5 rounded-full hover:bg-[#1a1a1a] transition-colors">Ver
+                            todos</button>
+                    </div>
+
+                    <div class="bg-[#141414] rounded-[2rem] overflow-hidden border border-white/5">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-white/5 text-gray-500 text-xs uppercase tracking-wider">
+                                    <th class="p-6 font-medium pl-8">Lead / Cliente</th>
+                                    <th class="p-6 font-medium">Canal</th>
+                                    <th class="p-6 font-medium">Status</th>
+                                    <th class="p-6 font-medium">Valor</th>
+                                    <th class="p-6 font-medium text-right pr-8">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body" class="text-sm">
+                                <!-- JS vai preencher aqui. Grug espera. -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DRAWER (MODAL LATERAL) -->
+            <div id="drawer-backdrop" onclick="app.closeDrawer()"
+                class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] hidden transition-opacity"></div>
+
+            <div id="drawer"
+                class="fixed inset-y-0 right-0 w-full md:w-[500px] bg-[#141414] shadow-2xl z-[100] border-l border-white/5 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+                <!-- Conteúdo do Drawer preenchido via JS -->
+                <div id="drawer-content" class="h-full flex flex-col"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- GRUG JS: CÓDIGO SIMPLES -->
+    <script>
+        // --- GRUG STATE ---
+        const state = {
+            leads: [
+                { id: 1, name: "Beatriz S.", source: "instagram", status: "new", phone: "5511999999999", value: 15000, timestamp: Date.now() - 1800000, notes: "Quer rebranding completo p/ marca de joias.", contacted: false },
+                { id: 2, name: "Agência VML", source: "whatsapp", status: "negotiation", phone: "5511988888888", value: 45000, timestamp: Date.now() - 18000000, notes: "Projeto 3D para campanha de natal. Urgente.", contacted: true },
+                { id: 3, name: "Ricardo T.", source: "form", status: "new", phone: "5511977777777", value: 8500, timestamp: Date.now() - 90000000, notes: "Landing page para lançamento de infoproduto.", contacted: false },
+            ],
+            filter: 'hoje',
+            activeLead: null
+        };
+
+        // --- GRUG APP LOGIC ---
+        const app = {
+            init: () => {
+                // Configurar Data
+                document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+
+                // Login Listener
+                document.getElementById('login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const pass = document.getElementById('password-input').value;
+                    if (pass === 'gui2025') {
+                        document.getElementById('login-screen').classList.add('hidden');
+                        document.getElementById('dashboard').classList.remove('hidden');
+                        app.injectCalendly(); // Só injeta se logar
+                        app.render();
+                    } else {
+                        document.getElementById('login-error').classList.remove('hidden');
+                    }
+                });
+
+                // Atalhos de Teclado
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') app.closeDrawer();
+                    if (e.key.toLowerCase() === 'w' && state.activeLead) app.openWhatsApp(state.activeLead);
+                });
+
+                lucide.createIcons();
+            },
+
+            injectCalendly: () => {
+                const head = document.querySelector('head');
+                const script = document.createElement('script');
+                script.src = 'https://assets.calendly.com/assets/external/widget.js';
+                head.appendChild(script);
+                const css = document.createElement('link');
+                css.rel = 'stylesheet';
+                css.href = 'https://assets.calendly.com/assets/external/widget.css';
+                head.appendChild(css);
+            },
+
+            formatCurrency: (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val),
+
+            getTemperature: (ts) => {
+                const diff = (Date.now() - ts) / 3600000; // horas
+                if (diff < 2) return { label: "FERVENDO", classes: "text-neon-pink bg-neon-pink-10" };
+                if (diff < 24) return { label: "MORNO", classes: "text-gold bg-gold-10" };
+                return { label: "FRIO", classes: "text-neon-green bg-neon-green-10" }; // Azul/Verde pra frio
+            },
+
+            setFilter: (f) => {
+                state.filter = f;
+                // Update active state visual dos botões
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    const isActive = btn.dataset.filter === f;
+                    btn.classList.toggle('text-[#d4af37]', isActive);
+                    btn.classList.toggle('bg-[#1a1a1a]', isActive);
+                    btn.classList.toggle('shadow-[0_0_20px_rgba(212,175,55,0.1)]', isActive);
+                    if (!isActive) {
+                        btn.classList.add('text-gray-400');
+                        btn.classList.remove('bg-[#1a1a1a]');
+                    }
+                });
+                app.render();
+            },
+
+            openWhatsApp: (lead) => {
+                const msg = `Oi ${lead.name.split(' ')[0]}, tudo certo? Sobre o job que você pediu no site...`;
+                window.open(`https://wa.me/${lead.phone}?text=${encodeURIComponent(msg)}`, '_blank');
+                // Marca como contatado
+                const idx = state.leads.findIndex(l => l.id === lead.id);
+                if (idx !== -1) {
+                    state.leads[idx].contacted = true;
+                    app.render();
+                }
+            },
+
+            openCalendly: (lead) => {
+                if (window.Calendly) {
+                    window.Calendly.initPopupWidget({
+                        url: 'https://calendly.com/gui-magellane/reuniao-de-briefing',
+                        prefill: lead ? {
+                            name: lead.name,
+                            email: 'email@mock.com',
+                            customAnswers: { a1: lead.phone }
+                        } : {}
+                    });
+                } else {
+                    alert("Calendly carregando... Grug pede paciência.");
+                }
+            },
+
+            exportCSV: () => {
+                const headers = "ID,Nome,Origem,Valor,Telefone,Data\n";
+                const rows = state.leads.map(l => `${l.id},${l.name},${l.source},${l.value},${l.phone},${new Date(l.timestamp).toLocaleDateString()}`).join("\n");
+                const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "leads_gui_grug.csv";
+                link.click();
+                app.showToast("CSV baixado com sucesso!", "success");
+            },
+
+            simulateLead: () => {
+                const names = ["Studio Ghibli", "Pixar Brasil", "Globo Filmes", "Omelete"];
+                const newLead = {
+                    id: Date.now(),
+                    name: names[Math.floor(Math.random() * names.length)],
+                    source: Math.random() > 0.5 ? "instagram" : "form",
+                    status: "new",
+                    phone: "5511999999999",
+                    value: Math.floor(Math.random() * 40000) + 5000,
+                    timestamp: Date.now(),
+                    notes: "Lead simulado pelo botão secreto do Grug.",
+                    contacted: false
+                };
+                state.leads.unshift(newLead);
+                document.getElementById('notif-sound').play().catch(e => console.log("Audio blocked"));
+                app.showToast(`Novo Lead: ${app.formatCurrency(newLead.value)}`, "alert");
+                document.title = "(1) Leads • Gui";
+                setTimeout(() => document.title = "Admin • Gui", 5000);
+                app.render();
+            },
+
+            showToast: (msg, type) => {
+                const container = document.getElementById('toast-container');
+                const el = document.createElement('div');
+                const color = type === 'alert' ? 'text-neon-pink border-neon-pink' : 'text-neon-green border-neon-green';
+                el.className = `flex items-center gap-4 px-6 py-4 rounded-xl bg-[#141414] border shadow-2xl mb-2 animate-bounce ${type === 'alert' ? 'border-[#ff00aa]/30' : 'border-[#39ff14]/30'}`;
+                el.innerHTML = `
+                    <div class="p-2 rounded-full ${type === 'alert' ? 'bg-neon-pink-10 text-neon-pink' : 'bg-neon-green-10 text-neon-green'}">
+                        <i data-lucide="${type === 'alert' ? 'zap' : 'check'}" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-white text-sm">${type === 'alert' ? 'Nova Oportunidade!' : 'Sucesso'}</p>
+                        <p class="text-gray-400 text-xs">${msg}</p>
+                    </div>
+                `;
+                container.appendChild(el);
+                lucide.createIcons();
+                setTimeout(() => el.remove(), 4000);
+            },
+
+            openDrawer: (lead) => {
+                state.activeLead = lead;
+                const drawer = document.getElementById('drawer');
+                const backdrop = document.getElementById('drawer-backdrop');
+                const content = document.getElementById('drawer-content');
+
+                drawer.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+
+                content.innerHTML = `
+                    <div class="p-8 flex items-center justify-between border-b border-white/5">
+                       <h2 class="text-2xl font-syne font-bold text-white">${lead.name}</h2>
+                       <button onclick="app.closeDrawer()" class="p-2 hover:bg-white/5 rounded-full text-gray-400">
+                         <i data-lucide="x" class="w-6 h-6"></i>
+                       </button>
+                    </div>
+                    <div class="p-8 flex-1 overflow-y-auto space-y-8">
+                       <div class="p-8 rounded-3xl bg-[#0f0f0f] border border-white/5 text-center relative overflow-hidden">
+                          <div class="absolute top-0 right-0 w-32 h-32 bg-gold-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                          <p class="text-gray-500 text-xs uppercase tracking-widest mb-2">Valor do Projeto</p>
+                          <h3 class="text-5xl font-syne font-bold text-[#d4af37] mb-6">${app.formatCurrency(lead.value)}</h3>
+                          <div class="grid grid-cols-1 gap-3">
+                            <button onclick='app.openWhatsApp(${JSON.stringify(lead)})' class="w-full py-4 bg-[#25D366] text-black font-bold rounded-xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-lg shadow-green-900/20">
+                               <i data-lucide="message-circle" class="w-5 h-5"></i> Conversar no WhatsApp
+                            </button>
+                            <button onclick='app.openCalendly(${JSON.stringify(lead)})' class="w-full py-4 bg-[#1a1a1a] text-white border border-white/10 font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-[#252525] transition-colors">
+                               <i data-lucide="calendar-days" class="w-5 h-5"></i> Marcar Reunião Agora
+                            </button>
+                          </div>
+                       </div>
+                       <div>
+                          <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider text-gray-500">Briefing Inicial</h4>
+                          <p class="text-gray-300 text-lg leading-relaxed font-light italic bg-[#0f0f0f] p-6 rounded-2xl border border-white/5">"${lead.notes}"</p>
+                       </div>
+                    </div>
+                `;
+                lucide.createIcons();
+            },
+
+            closeDrawer: () => {
+                state.activeLead = null;
+                document.getElementById('drawer').classList.add('translate-x-full');
+                document.getElementById('drawer-backdrop').classList.add('hidden');
+            },
+
+            render: () => {
+                // Filtra Leads
+                const filtered = state.leads.filter(l => {
+                    const diff = Date.now() - l.timestamp;
+                    if (state.filter === 'hoje') return diff < 86400000;
+                    if (state.filter === 'quentes') return diff < 7200000; // 2h
+                    if (state.filter === 'whatsapp') return l.source === 'whatsapp';
+                    return true;
+                });
+
+                // Atualiza KPIs
+                const totalValue = state.leads.reduce((acc, l) => acc + l.value, 0);
+                document.getElementById('kpi-total').innerText = app.formatCurrency(totalValue);
+                document.getElementById('kpi-count').innerText = state.leads.filter(l => !l.contacted).length;
+                document.getElementById('leads-count-badge').innerText = filtered.length;
+
+                // Renderiza Tabela (O jeito Grug: innerHTML limpo)
+                const tbody = document.getElementById('leads-table-body');
+                tbody.innerHTML = filtered.map(lead => {
+                    const temp = app.getTemperature(lead.timestamp);
+                    const isNew = !lead.contacted;
+                    return `
+                        <tr class="group cursor-pointer hover:bg-white/[0.02] transition-colors border-b border-white/5 last:border-0" onclick='app.openDrawer(${JSON.stringify(lead)})'>
+                            <td class="p-6 pl-8">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs relative ${lead.contacted ? 'bg-neon-green-10 text-neon-green' : 'bg-neon-pink-10 text-neon-pink'}">
+                                        ${lead.name.charAt(0)}
+                                        ${isNew ? '<span class="absolute -top-1 -right-1 w-3 h-3 bg-neon-pink border-2 border-[#141414] rounded-full"></span>' : ''}
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium group-hover:text-[#d4af37] transition-colors">${lead.name}</p>
+                                        <p class="text-xs text-gray-500">ID #${lead.id}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                   <p className="text-white font-medium group-hover:text-[#d4af37] transition-colors">{lead.name}</p>
-                                   <p className="text-xs text-gray-500">ID #{lead.id}</p>
+                            </td>
+                            <td class="p-6">
+                                <div class="flex items-center gap-2 text-gray-400">
+                                    <i data-lucide="${lead.source === 'whatsapp' ? 'message-circle' : 'instagram'}" class="w-4 h-4"></i>
+                                    <span class="capitalize">${lead.source}</span>
                                 </div>
-                             </div>
-                          </td>
-                          <td className="p-6">
-                            <div className="flex items-center gap-2 text-gray-400">
-                               {lead.source === 'whatsapp' ? <MessageCircle size={16} aria-hidden="true"/> : <Instagram size={16} aria-hidden="true"/>}
-                               <span className="capitalize">{lead.source}</span>
-                            </div>
-                          </td>
-                          <td className="p-6">
-                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${temp.bg} ${temp.color}`}>
-                              {temp.label}
-                            </span>
-                          </td>
-                          <td className="p-6 font-mono text-gray-300">
-                            {formatCurrency(lead.value)}
-                          </td>
-                          <td className="p-6 text-right pr-8" onClick={(e) => e.stopPropagation()}>
-                             <button 
-                               onClick={() => openWhatsApp(lead)}
-                               aria-label={`Abrir WhatsApp de ${lead.name}`}
-                               className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-[#25D366] hover:border-[#25D366] hover:bg-[#25D366]/10 transition-all ml-auto outline-none"
-                             >
-                               <MessageCircle size={18} aria-hidden="true" />
-                             </button>
-                          </td>
+                            </td>
+                            <td class="p-6">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold ${temp.classes}">${temp.label}</span>
+                            </td>
+                            <td class="p-6 font-mono text-gray-300">${app.formatCurrency(lead.value)}</td>
+                            <td class="p-6 text-right pr-8">
+                                <button onclick='event.stopPropagation(); app.openWhatsApp(${JSON.stringify(lead)})' class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-neon-green hover:border-neon-green hover:bg-neon-green-10 transition-all ml-auto">
+                                    <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                </button>
+                            </td>
                         </tr>
-                      )
-                   })}
-                 </tbody>
-               </table>
-            </div>
-          </section>
-        </div>
+                    `;
+                }).join('');
 
-        {/* --- DRAWER (MODAL) --- */}
-        <div 
-          className={`
-           fixed inset-y-0 right-0 w-full md:w-[500px] bg-[#141414] shadow-2xl z-[100] transform transition-transform duration-300 ease-in-out border-l border-white/5
-           ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}
-          `}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="drawer-title"
-          tabIndex={-1}
-          ref={drawerRef}
-        >
-           {activeLead && (
-             <div className="h-full flex flex-col">
-                <div className="p-8 flex items-center justify-between border-b border-white/5">
-                   <h2 id="drawer-title" className="text-2xl font-syne font-bold text-white">{activeLead.name}</h2>
-                   <button 
-                     onClick={() => setDrawerOpen(false)} 
-                     className="p-2 hover:bg-white/5 rounded-full text-gray-400 focus:text-white"
-                   >
-                     <X size={24} aria-hidden="true"/>
-                   </button>
-                </div>
-                
-                <div className="p-8 flex-1 overflow-y-auto space-y-8">
-                   <div className="p-8 rounded-3xl bg-[#0f0f0f] border border-white/5 text-center relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                      <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Valor do Projeto</p>
-                      <h3 className="text-5xl font-syne font-bold text-[#d4af37] mb-6">{formatCurrency(activeLead.value)}</h3>
-                      
-                      <div className="grid grid-cols-1 gap-3">
-                        <button 
-                          onClick={() => openWhatsApp(activeLead)}
-                          className="w-full py-4 bg-[#25D366] text-black font-bold rounded-xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-lg shadow-green-900/20"
-                        >
-                           <MessageCircle size={20} aria-hidden="true" /> Conversar no WhatsApp
-                        </button>
-                        
-                        <button 
-                          onClick={() => openCalendly(activeLead)}
-                          className="w-full py-4 bg-[#1a1a1a] text-white border border-white/10 font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-[#252525] transition-colors"
-                        >
-                           <CalendarDays size={20} aria-hidden="true" /> Marcar Reunião Agora
-                        </button>
-                      </div>
-                      <p className="mt-4 text-xs text-gray-500">Atalho: Pressione 'W' para Zap</p>
-                   </div>
-                   
-                   <div>
-                      <h4 className="text-sm font-bold text-white mb-3 uppercase tracking-wider text-gray-500">Briefing Inicial</h4>
-                      <p className="text-gray-300 text-lg leading-relaxed font-light italic bg-[#0f0f0f] p-6 rounded-2xl border border-white/5">
-                        "{activeLead.notes}"
-                      </p>
-                   </div>
+                // Re-inicializa ícones novos
+                lucide.createIcons();
+            }
+        };
 
-                   <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-2xl bg-[#0f0f0f] border border-white/5">
-                        <p className="text-gray-500 text-xs mb-1">Contato</p>
-                        <p className="text-white font-mono text-sm">{activeLead.phone}</p>
-                      </div>
-                      <div className="p-4 rounded-2xl bg-[#0f0f0f] border border-white/5">
-                        <p className="text-gray-500 text-xs mb-1">Data</p>
-                        <p className="text-white font-mono text-sm">{new Date(activeLead.timestamp).toLocaleDateString()}</p>
-                      </div>
-                   </div>
-                </div>
-             </div>
-           )}
-        </div>
-        
-        {drawerOpen && (
-          <div 
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90]" 
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden="true"
-          ></div>
-        )}
+        // Grug Inicializa
+        app.init();
+    </script>
+</body>
 
-      </main>
-    </div>
-  );
-};
-
-export default AdminDashboard;
+</html>
