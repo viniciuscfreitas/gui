@@ -366,12 +366,23 @@ ADMIN_HTML = '''<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin • Gui</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 
     <!-- Grug usa Tailwind CDN. Rápido. Fácil. -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Grug usa Lucide Icons. Bonitos. -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        // Grug helper: garantir que Lucide está disponível
+        window.initLucide = function() {
+            if (typeof lucide !== 'undefined' && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+                return true;
+            }
+            return false;
+        };
+    </script>
 
     <!-- Fonte Syne e Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Syne:wght@700;800&display=swap"
@@ -622,7 +633,10 @@ ADMIN_HTML = '''<!DOCTYPE html>
         const app = {
             init: () => {
                 // Configurar Data
-                document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+                const dateEl = document.getElementById('current-date');
+                if (dateEl) {
+                    dateEl.innerText = new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+                }
 
                 // Atalhos de Teclado
                 document.addEventListener('keydown', (e) => {
@@ -630,7 +644,19 @@ ADMIN_HTML = '''<!DOCTYPE html>
                     if (e.key.toLowerCase() === 'w' && state.activeLead) app.openWhatsApp(state.activeLead);
                 });
 
-                lucide.createIcons();
+                // Inicializar ícones (Grug-approved: esperar carregar)
+                if (window.initLucide && window.initLucide()) {
+                    // OK
+                } else {
+                    // Retry se Lucide ainda não carregou
+                    setTimeout(() => {
+                        if (window.initLucide) window.initLucide();
+                    }, 500);
+                    setTimeout(() => {
+                        if (window.initLucide) window.initLucide();
+                    }, 1500);
+                }
+                
                 app.loadLeads();
                 setInterval(app.loadLeads, 30000); // Atualizar a cada 30s
             },
@@ -763,7 +789,7 @@ ADMIN_HTML = '''<!DOCTYPE html>
                     </div>
                 `;
                 container.appendChild(el);
-                lucide.createIcons();
+                if (window.initLucide) window.initLucide();
                 setTimeout(() => el.remove(), 4000);
             },
 
@@ -804,11 +830,11 @@ ADMIN_HTML = '''<!DOCTYPE html>
                        </div>
                        <div>
                           <h4 class="text-sm font-bold text-white mb-3 uppercase tracking-wider text-gray-500">Briefing Inicial</h4>
-                          <p class="text-gray-300 text-lg leading-relaxed font-light italic bg-[#0f0f0f] p-6 rounded-2xl border border-white/5">"${app.escapeHtml(notes)}"</p>
+                          <p class="text-gray-300 text-lg leading-relaxed font-light italic bg-[#0f0f0f] p-6 rounded-2xl border border-white/5">&quot;${app.escapeHtml(notes)}&quot;</p>
                        </div>
                     </div>
                 `;
-                lucide.createIcons();
+                if (window.initLucide) window.initLucide();
             },
 
             closeDrawer: () => {
@@ -921,7 +947,7 @@ ADMIN_HTML = '''<!DOCTYPE html>
                 }
 
                 // Re-inicializa ícones novos
-                lucide.createIcons();
+                if (window.initLucide) window.initLucide();
             }
         };
 
